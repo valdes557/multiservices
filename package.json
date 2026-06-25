@@ -60,5 +60,8 @@
     "tailwindcss-animate": "^1.0.7",
     "eslint": "^8.56.0",
     "eslint-config-next": "^14.1.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
   }
 }
