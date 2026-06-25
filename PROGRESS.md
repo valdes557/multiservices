@@ -9,8 +9,9 @@
 ## SETUP
 - [x] Rapatriement du projet en local
 - [x] Init git local + checkpoint baseline
-- [ ] Ajout dépendances (recharts, jspdf, html2canvas, shadcn: tabs/select/dialog/slider)
-- [ ] Hook réutilisable + service API patterns
+- [x] Dépendances vérifiées (toutes déjà présentes: radix, jspdf, html2canvas, pdf-lib, file-saver)
+- [x] ~~Ajout dépendances~~ (recharts, jspdf, html2canvas, shadcn: tabs/select/dialog/slider)
+- [x] Hooks (useDebounce, useLocalStorage) + ToolLayout + registre lib/tools.ts + SEO helper
 - [ ] Entrées i18n FR/EN pour les 8 outils
 - [ ] Liens dans Navbar / page d'accueil / /services
 
@@ -18,7 +19,7 @@
 - [ ] Outil 1 — Convertisseur de devises (temps réel, historique, /tools/currency-converter)
 - [ ] Outil 2 — Générateur de documents admin (10 modèles, formulaire, export PDF)
 - [ ] Outil 3 — Correction & reformulation de texte (éditeur, 6 modes)
-- [ ] Outil 4 — Calculateur de prêt (mensualité, amortissement, graphiques)
+- [x] Outil 4 — Calculateur de prêt (mensualité, amortissement, graphiques)
 - [ ] Outil 5 — Convertisseur universel (10 catégories d'unités)
 - [ ] Outil 6 — Vérificateur rentabilité AdSense (+ graphiques)
 - [ ] Outil 7 — Générateur de CV pro (modèles, aperçu live, PDF, ATS)
