@@ -7,8 +7,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { categories, convert } from '@/lib/units';
+import { useLocale } from '@/context/LocaleContext';
 
 export default function UnitConverterPage() {
+  const { locale } = useLocale();
+  const en = locale === 'en';
   const [catId, setCatId] = useState(categories[0].id);
   const cat = categories.find((c) => c.id === catId)!;
   const [from, setFrom] = useState(cat.units[0].id);
@@ -19,7 +22,7 @@ export default function UnitConverterPage() {
     const v = parseFloat(value);
     if (isNaN(v)) return '';
     const r = convert(catId, from, to, v);
-    return new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 6 }).format(r);
+    return new Intl.NumberFormat(en ? 'en-US' : 'fr-FR', { maximumFractionDigits: 6 }).format(r);
   }, [catId, from, to, value]);
 
   function selectCat(id: string) {
@@ -29,7 +32,7 @@ export default function UnitConverterPage() {
   function swap() { setFrom(to); setTo(from); }
 
   return (
-    <ToolLayout title="Convertisseur universel" description="Convertissez instantanément entre 10 catégories d'unités." icon={<Ruler className="h-7 w-7" />}>
+    <ToolLayout title={en ? 'Universal converter' : 'Convertisseur universel'} description={en ? 'Instantly convert between 10 unit categories.' : "Convertissez instantanément entre 10 catégories d'unités."} icon={<Ruler className="h-7 w-7" />}>
       <div className="mb-6 flex flex-wrap gap-2">
         {categories.map((c) => (
           <button key={c.id} onClick={() => selectCat(c.id)}
@@ -42,7 +45,7 @@ export default function UnitConverterPage() {
         <CardContent className="pt-6">
           <div className="grid items-end gap-4 sm:grid-cols-[1fr_auto_1fr]">
             <div className="space-y-3">
-              <div className="space-y-1.5"><Label>De</Label>
+              <div className="space-y-1.5"><Label>{en ? 'From' : 'De'}</Label>
                 <select value={from} onChange={(e) => setFrom(e.target.value)} className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm">
                   {cat.units.map((u) => <option key={u.id} value={u.id}>{u.label}</option>)}
                 </select>
@@ -51,7 +54,7 @@ export default function UnitConverterPage() {
             </div>
             <Button variant="outline" size="icon" onClick={swap} className="mb-0.5"><ArrowRightLeft className="h-4 w-4" /></Button>
             <div className="space-y-3">
-              <div className="space-y-1.5"><Label>Vers</Label>
+              <div className="space-y-1.5"><Label>{en ? 'To' : 'Vers'}</Label>
                 <select value={to} onChange={(e) => setTo(e.target.value)} className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm">
                   {cat.units.map((u) => <option key={u.id} value={u.id}>{u.label}</option>)}
                 </select>

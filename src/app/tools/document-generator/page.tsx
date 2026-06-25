@@ -8,8 +8,11 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { docTemplates } from '@/lib/documents';
+import { useLocale } from '@/context/LocaleContext';
 
 export default function DocumentGeneratorPage() {
+  const { locale } = useLocale();
+  const en = locale === 'en';
   const [tplId, setTplId] = useState(docTemplates[0].id);
   const tpl = docTemplates.find((t) => t.id === tplId)!;
   const [values, setValues] = useState<Record<string, string>>({});
@@ -32,7 +35,7 @@ export default function DocumentGeneratorPage() {
   }
 
   return (
-    <ToolLayout title="Générateur de documents administratifs" description="Choisissez un modèle, remplissez le formulaire et exportez votre document en PDF." icon={<FileText className="h-7 w-7" />}>
+    <ToolLayout title={en ? 'Administrative document generator' : 'Générateur de documents administratifs'} description={en ? 'Pick a template, fill the form and export your document as PDF.' : 'Choisissez un modèle, remplissez le formulaire et exportez votre document en PDF.'} icon={<FileText className="h-7 w-7" />}>
       <div className="mb-6 flex flex-wrap gap-2">
         {docTemplates.map((t) => (
           <button key={t.id} onClick={() => { setTplId(t.id); setValues({}); }}
@@ -43,7 +46,7 @@ export default function DocumentGeneratorPage() {
       </div>
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
-          <CardHeader><CardTitle>Informations</CardTitle></CardHeader>
+          <CardHeader><CardTitle>{en ? 'Information' : 'Informations'}</CardTitle></CardHeader>
           <CardContent className="space-y-4">
             {tpl.fields.map((f) => (
               <div key={f.name} className="space-y-1.5">
@@ -57,8 +60,8 @@ export default function DocumentGeneratorPage() {
         </Card>
         <Card>
           <CardHeader className="flex-row items-center justify-between space-y-0">
-            <CardTitle>Aperçu</CardTitle>
-            <Button onClick={exportPdf} size="sm"><Download className="mr-2 h-4 w-4" /> Exporter PDF</Button>
+            <CardTitle>{en ? 'Preview' : 'Aperçu'}</CardTitle>
+            <Button onClick={exportPdf} size="sm"><Download className="mr-2 h-4 w-4" /> {en ? 'Export PDF' : 'Exporter PDF'}</Button>
           </CardHeader>
           <CardContent>
             <pre className="min-h-[400px] whitespace-pre-wrap rounded-lg border bg-white p-6 font-serif text-sm leading-relaxed text-gray-800">{doc.body}</pre>

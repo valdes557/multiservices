@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import { useLocale } from '@/context/LocaleContext';
 
 const formats = [
   { id: 'facebook', label: 'Facebook', w: 1200, h: 628 },
@@ -18,10 +19,12 @@ const formats = [
 ];
 
 export default function BannerGeneratorPage() {
+  const { locale } = useLocale();
+  const en = locale === 'en';
   const [fmt, setFmt] = useState(formats[0]);
-  const [title, setTitle] = useState('Votre titre accrocheur');
-  const [subtitle, setSubtitle] = useState('Un sous-titre convaincant pour votre offre');
-  const [cta, setCta] = useState('En savoir plus');
+  const [title, setTitle] = useState(en ? 'Your catchy title' : 'Votre titre accrocheur');
+  const [subtitle, setSubtitle] = useState(en ? 'A convincing subtitle for your offer' : 'Un sous-titre convaincant pour votre offre');
+  const [cta, setCta] = useState(en ? 'Learn more' : 'En savoir plus');
   const [bg, setBg] = useState('#1e3a8a');
   const [bg2, setBg2] = useState('#3b82f6');
   const [textColor, setTextColor] = useState('#ffffff');
@@ -41,21 +44,21 @@ export default function BannerGeneratorPage() {
   }
   async function downloadPng() {
     const canvas = await snapshot();
-    const a = document.createElement('a'); a.href = canvas.toDataURL('image/png'); a.download = `banniere-${fmt.id}.png`; a.click();
+    const a = document.createElement('a'); a.href = canvas.toDataURL('image/png'); a.download = `banner-${fmt.id}.png`; a.click();
   }
   async function downloadPdf() {
     const canvas = await snapshot();
     const { default: jsPDF } = await import('jspdf');
     const pdf = new jsPDF({ unit: 'px', format: [fmt.w, fmt.h], orientation: fmt.w >= fmt.h ? 'landscape' : 'portrait' });
     pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, fmt.w, fmt.h);
-    pdf.save(`banniere-${fmt.id}.pdf`);
+    pdf.save(`banner-${fmt.id}.pdf`);
   }
 
   const scale = Math.min(560 / fmt.w, 400 / fmt.h);
 
   return (
-    <ToolLayout title="Générateur de bannières publicitaires" description="Créez des bannières pour Facebook, Instagram, Google Ads, LinkedIn et YouTube, puis exportez en PNG ou PDF." icon={<ImageIcon className="h-7 w-7" />} premium>
-      <PremiumGate toolName="Générateur de bannières">
+    <ToolLayout title={en ? 'Ad banner generator' : 'Générateur de bannières publicitaires'} description={en ? 'Create banners for Facebook, Instagram, Google Ads, LinkedIn and YouTube, then export as PNG or PDF.' : 'Créez des bannières pour Facebook, Instagram, Google Ads, LinkedIn et YouTube, puis exportez en PNG ou PDF.'} icon={<ImageIcon className="h-7 w-7" />} premium>
+      <PremiumGate toolName={en ? 'Banner generator' : 'Générateur de bannières'}>
       <div className="mb-6 flex flex-wrap gap-2">
         {formats.map((f) => (
           <button key={f.id} onClick={() => setFmt(f)} className={`rounded-full border px-4 py-1.5 text-sm ${fmt.id === f.id ? 'border-primary bg-primary text-primary-foreground' : 'hover:bg-muted'}`}>
@@ -65,19 +68,19 @@ export default function BannerGeneratorPage() {
       </div>
       <div className="grid gap-6 lg:grid-cols-[340px_1fr]">
         <Card>
-          <CardHeader><CardTitle>Personnalisation</CardTitle></CardHeader>
+          <CardHeader><CardTitle>{en ? 'Customization' : 'Personnalisation'}</CardTitle></CardHeader>
           <CardContent className="space-y-3">
-            <div className="space-y-1.5"><Label>Titre</Label><Input value={title} onChange={(e) => setTitle(e.target.value)} /></div>
-            <div className="space-y-1.5"><Label>Sous-titre</Label><Input value={subtitle} onChange={(e) => setSubtitle(e.target.value)} /></div>
-            <div className="space-y-1.5"><Label>Texte du bouton (CTA)</Label><Input value={cta} onChange={(e) => setCta(e.target.value)} /></div>
+            <div className="space-y-1.5"><Label>{en ? 'Title' : 'Titre'}</Label><Input value={title} onChange={(e) => setTitle(e.target.value)} /></div>
+            <div className="space-y-1.5"><Label>{en ? 'Subtitle' : 'Sous-titre'}</Label><Input value={subtitle} onChange={(e) => setSubtitle(e.target.value)} /></div>
+            <div className="space-y-1.5"><Label>{en ? 'Button text (CTA)' : 'Texte du bouton (CTA)'}</Label><Input value={cta} onChange={(e) => setCta(e.target.value)} /></div>
             <div className="grid grid-cols-2 gap-3">
-              <Color label="Fond 1" value={bg} onChange={setBg} />
-              <Color label="Fond 2" value={bg2} onChange={setBg2} />
-              <Color label="Texte" value={textColor} onChange={setTextColor} />
-              <Color label="Bouton" value={ctaColor} onChange={setCtaColor} />
+              <Color label={en ? 'Background 1' : 'Fond 1'} value={bg} onChange={setBg} />
+              <Color label={en ? 'Background 2' : 'Fond 2'} value={bg2} onChange={setBg2} />
+              <Color label={en ? 'Text' : 'Texte'} value={textColor} onChange={setTextColor} />
+              <Color label={en ? 'Button' : 'Bouton'} value={ctaColor} onChange={setCtaColor} />
             </div>
-            <div className="space-y-1.5"><Label>Image de fond</Label><Input type="file" accept="image/*" onChange={(e) => onFile(e, setImageUrl)} /></div>
-            <div className="space-y-1.5"><Label>Logo</Label><Input type="file" accept="image/*" onChange={(e) => onFile(e, setLogoUrl)} /></div>
+            <div className="space-y-1.5"><Label>{en ? 'Background image' : 'Image de fond'}</Label><Input type="file" accept="image/*" onChange={(e) => onFile(e, setImageUrl)} /></div>
+            <div className="space-y-1.5"><Label>{en ? 'Logo' : 'Logo'}</Label><Input type="file" accept="image/*" onChange={(e) => onFile(e, setLogoUrl)} /></div>
             <div className="flex gap-2 pt-2">
               <Button className="flex-1" onClick={downloadPng}><Download className="mr-2 h-4 w-4" /> PNG</Button>
               <Button className="flex-1" variant="outline" onClick={downloadPdf}><FileDown className="mr-2 h-4 w-4" /> PDF</Button>

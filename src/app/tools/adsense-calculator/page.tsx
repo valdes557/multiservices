@@ -5,10 +5,13 @@ import { ToolLayout } from '@/components/tools/ToolLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useLocale } from '@/context/LocaleContext';
 
-const fmt = (v: number) => new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 }).format(v);
+const fmt = (v: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 }).format(v);
 
 export default function AdsenseCalculatorPage() {
+  const { locale } = useLocale();
+  const en = locale === 'en';
   const [visitors, setVisitors] = useState(50000); // visiteurs mensuels
   const [ctr, setCtr] = useState(2);   // %
   const [cpc, setCpc] = useState(0.35); // $
@@ -28,29 +31,29 @@ export default function AdsenseCalculatorPage() {
   const maxV = Math.max(...series, 1);
 
   return (
-    <ToolLayout title="Vérificateur de rentabilité AdSense" description="Estimez vos revenus AdSense à partir de votre trafic, CTR et CPC moyen." icon={<TrendingUp className="h-7 w-7" />}>
+    <ToolLayout title={en ? 'AdSense profitability checker' : 'Vérificateur de rentabilité AdSense'} description={en ? 'Estimate your AdSense revenue from your traffic, CTR and average CPC.' : 'Estimez vos revenus AdSense à partir de votre trafic, CTR et CPC moyen.'} icon={<TrendingUp className="h-7 w-7" />}>
       <div className="grid gap-6 lg:grid-cols-3">
         <Card className="lg:col-span-1">
-          <CardHeader><CardTitle>Vos données</CardTitle></CardHeader>
+          <CardHeader><CardTitle>{en ? 'Your data' : 'Vos données'}</CardTitle></CardHeader>
           <CardContent className="space-y-4">
-            <div className="space-y-1.5"><Label>Visiteurs mensuels</Label>
+            <div className="space-y-1.5"><Label>{en ? 'Monthly visitors' : 'Visiteurs mensuels'}</Label>
               <Input type="number" value={visitors} onChange={(e) => setVisitors(+e.target.value)} /></div>
             <div className="space-y-1.5"><Label>CTR (%)</Label>
               <Input type="number" step="0.1" value={ctr} onChange={(e) => setCtr(+e.target.value)} /></div>
-            <div className="space-y-1.5"><Label>CPC moyen ($)</Label>
+            <div className="space-y-1.5"><Label>{en ? 'Average CPC ($)' : 'CPC moyen ($)'}</Label>
               <Input type="number" step="0.01" value={cpc} onChange={(e) => setCpc(+e.target.value)} /></div>
-            <p className="rounded-md bg-muted p-3 text-xs text-muted-foreground">≈ {Math.round(r.clicksMonthly).toLocaleString('fr-FR')} clics/mois · RPM ≈ {fmt(r.rpm)}</p>
+            <p className="rounded-md bg-muted p-3 text-xs text-muted-foreground">≈ {Math.round(r.clicksMonthly).toLocaleString(en ? 'en-US' : 'fr-FR')} {en ? 'clicks/mo' : 'clics/mois'} · RPM ≈ {fmt(r.rpm)}</p>
           </CardContent>
         </Card>
 
         <div className="lg:col-span-2 space-y-6">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <Metric label="Revenus quotidiens" value={fmt(r.daily)} />
-            <Metric label="Revenus mensuels" value={fmt(r.monthly)} accent />
-            <Metric label="Revenus annuels" value={fmt(r.yearly)} />
+            <Metric label={en ? 'Daily revenue' : 'Revenus quotidiens'} value={fmt(r.daily)} />
+            <Metric label={en ? 'Monthly revenue' : 'Revenus mensuels'} value={fmt(r.monthly)} accent />
+            <Metric label={en ? 'Yearly revenue' : 'Revenus annuels'} value={fmt(r.yearly)} />
           </div>
           <Card>
-            <CardHeader><CardTitle>Projection sur 12 mois</CardTitle></CardHeader>
+            <CardHeader><CardTitle>{en ? '12-month projection' : 'Projection sur 12 mois'}</CardTitle></CardHeader>
             <CardContent>
               <div className="flex h-48 items-end gap-1.5">
                 {series.map((v, i) => (

@@ -9,10 +9,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
+import { useLocale } from '@/context/LocaleContext';
 
 type Template = 'modern' | 'ats';
 
 export default function CvGeneratorPage() {
+  const { locale } = useLocale();
+  const en = locale === 'en';
   const [tpl, setTpl] = useState<Template>('modern');
   const [d, setD] = useState({
     name: 'Jean Dupont', title: 'Développeur Web', email: 'jean@email.com', phone: '06 12 34 56 78',
@@ -39,21 +42,21 @@ export default function CvGeneratorPage() {
   const skills = d.skills.split(',').map((s) => s.trim()).filter(Boolean);
 
   return (
-    <ToolLayout title="Générateur de CV professionnels" description="Créez un CV moderne ou ATS-friendly avec aperçu en temps réel et export PDF." icon={<User className="h-7 w-7" />} premium>
-      <PremiumGate toolName="Générateur de CV">
+    <ToolLayout title={en ? 'Professional CV generator' : 'Générateur de CV professionnels'} description={en ? 'Build a modern or ATS-friendly resume with live preview and PDF export.' : 'Créez un CV moderne ou ATS-friendly avec aperçu en temps réel et export PDF.'} icon={<User className="h-7 w-7" />} premium>
+      <PremiumGate toolName={en ? 'CV generator' : 'Générateur de CV'}>
       <div className="mb-6 flex items-center gap-2">
-        <Button variant={tpl === 'modern' ? 'default' : 'outline'} size="sm" onClick={() => setTpl('modern')}>CV moderne</Button>
-        <Button variant={tpl === 'ats' ? 'default' : 'outline'} size="sm" onClick={() => setTpl('ats')}>CV ATS-friendly</Button>
-        <Button className="ml-auto" size="sm" onClick={exportPdf}><Download className="mr-2 h-4 w-4" /> Exporter PDF</Button>
+        <Button variant={tpl === 'modern' ? 'default' : 'outline'} size="sm" onClick={() => setTpl('modern')}>{en ? 'Modern CV' : 'CV moderne'}</Button>
+        <Button variant={tpl === 'ats' ? 'default' : 'outline'} size="sm" onClick={() => setTpl('ats')}>{en ? 'ATS-friendly CV' : 'CV ATS-friendly'}</Button>
+        <Button className="ml-auto" size="sm" onClick={exportPdf}><Download className="mr-2 h-4 w-4" /> {en ? 'Export PDF' : 'Exporter PDF'}</Button>
       </div>
       <div className="grid gap-6 lg:grid-cols-2">
         <Card className="lg:max-h-[80vh] lg:overflow-auto">
-          <CardHeader><CardTitle>Vos informations</CardTitle></CardHeader>
+          <CardHeader><CardTitle>{en ? 'Your information' : 'Vos informations'}</CardTitle></CardHeader>
           <CardContent className="space-y-3">
-            {[['name','Nom complet'],['title','Titre / Poste'],['email','Email'],['phone','Téléphone'],['city','Ville']].map(([k,l]) => (
+            {(en ? [['name','Full name'],['title','Title / Role'],['email','Email'],['phone','Phone'],['city','City']] : [['name','Nom complet'],['title','Titre / Poste'],['email','Email'],['phone','Téléphone'],['city','Ville']]).map(([k,l]) => (
               <div key={k} className="space-y-1.5"><Label>{l}</Label><Input value={(d as any)[k]} onChange={(e) => set(k, e.target.value)} /></div>
             ))}
-            {[['summary','Résumé'],['experience','Expériences'],['education','Formation'],['skills','Compétences (séparées par virgules)'],['languages','Langues']].map(([k,l]) => (
+            {(en ? [['summary','Summary'],['experience','Experience'],['education','Education'],['skills','Skills (comma-separated)'],['languages','Languages']] : [['summary','Résumé'],['experience','Expériences'],['education','Formation'],['skills','Compétences (séparées par virgules)'],['languages','Langues']]).map(([k,l]) => (
               <div key={k} className="space-y-1.5"><Label>{l}</Label><Textarea rows={k==='experience'?5:2} value={(d as any)[k]} onChange={(e) => set(k, e.target.value)} /></div>
             ))}
           </CardContent>
@@ -68,12 +71,12 @@ export default function CvGeneratorPage() {
                   <p className="text-lg text-gray-600">{d.title}</p>
                   <p className="mt-1 text-sm text-gray-500">{d.email} · {d.phone} · {d.city}</p>
                 </div>
-                <Section t="Profil">{d.summary}</Section>
-                <Section t="Expérience" pre>{d.experience}</Section>
-                <Section t="Formation" pre>{d.education}</Section>
-                <div className="mt-4"><h3 className="font-bold text-blue-700">Compétences</h3>
+                <Section t={en ? 'Profile' : 'Profil'}>{d.summary}</Section>
+                <Section t={en ? 'Experience' : 'Expérience'} pre>{d.experience}</Section>
+                <Section t={en ? 'Education' : 'Formation'} pre>{d.education}</Section>
+                <div className="mt-4"><h3 className="font-bold text-blue-700">{en ? 'Skills' : 'Compétences'}</h3>
                   <div className="mt-2 flex flex-wrap gap-2">{skills.map((s) => <span key={s} className="rounded-full bg-blue-50 px-3 py-1 text-xs text-blue-700">{s}</span>)}</div></div>
-                <Section t="Langues">{d.languages}</Section>
+                <Section t={en ? 'Languages' : 'Langues'}>{d.languages}</Section>
               </div>
             ) : (
               <div className="font-serif">
@@ -81,11 +84,11 @@ export default function CvGeneratorPage() {
                 <p>{d.title}</p>
                 <p className="text-sm">{d.email} | {d.phone} | {d.city}</p>
                 <hr className="my-3" />
-                <AtsSection t="RÉSUMÉ">{d.summary}</AtsSection>
-                <AtsSection t="EXPÉRIENCE PROFESSIONNELLE" pre>{d.experience}</AtsSection>
-                <AtsSection t="FORMATION" pre>{d.education}</AtsSection>
-                <AtsSection t="COMPÉTENCES">{d.skills}</AtsSection>
-                <AtsSection t="LANGUES">{d.languages}</AtsSection>
+                <AtsSection t={en ? 'SUMMARY' : 'RÉSUMÉ'}>{d.summary}</AtsSection>
+                <AtsSection t={en ? 'PROFESSIONAL EXPERIENCE' : 'EXPÉRIENCE PROFESSIONNELLE'} pre>{d.experience}</AtsSection>
+                <AtsSection t={en ? 'EDUCATION' : 'FORMATION'} pre>{d.education}</AtsSection>
+                <AtsSection t={en ? 'SKILLS' : 'COMPÉTENCES'}>{d.skills}</AtsSection>
+                <AtsSection t={en ? 'LANGUAGES' : 'LANGUES'}>{d.languages}</AtsSection>
               </div>
             )}
           </div>

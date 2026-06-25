@@ -8,8 +8,11 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { useDebounce } from '@/hooks/useDebounce';
 import { getCurrencies, getLatest, getHistory } from '@/lib/services/currency';
+import { useLocale } from '@/context/LocaleContext';
 
 export default function CurrencyConverterPage() {
+  const { locale } = useLocale();
+  const en = locale === 'en';
   const [currencies, setCurrencies] = useState<Record<string, string>>({});
   const [from, setFrom] = useState('EUR');
   const [to, setTo] = useState('USD');
@@ -33,7 +36,7 @@ export default function CurrencyConverterPage() {
     setLoading(true); setError('');
     getLatest(from, to, amt)
       .then((d) => { if (!active) return; setResult(d.rates[to]); setRate(d.rates[to] / amt); })
-      .catch(() => active && setError('Erreur de conversion. Réessayez.'))
+      .catch(() => active && setError(en ? 'Conversion error. Please retry.' : 'Erreur de conversion. Réessayez.'))
       .finally(() => active && setLoading(false));
     return () => { active = false; };
   }, [from, to, debouncedAmount]);
@@ -60,12 +63,12 @@ export default function CurrencyConverterPage() {
   const swap = () => { setFrom(to); setTo(from); };
 
   return (
-    <ToolLayout title="Convertisseur de devises" description="Conversion en temps réel de toutes les devises avec historique des taux sur 30 jours." icon={<Coins className="h-7 w-7" />}>
+    <ToolLayout title={en ? 'Currency converter' : 'Convertisseur de devises'} description={en ? 'Real-time conversion of all currencies with 30-day rate history.' : 'Conversion en temps réel de toutes les devises avec historique des taux sur 30 jours.'} icon={<Coins className="h-7 w-7" />}>
       <Card>
         <CardContent className="pt-6">
           <div className="grid items-end gap-4 sm:grid-cols-[1fr_auto_1fr]">
             <div className="space-y-3">
-              <div className="space-y-1.5"><Label>De</Label>
+              <div className="space-y-1.5"><Label>{en ? 'From' : 'De'}</Label>
                 <select value={from} onChange={(e) => setFrom(e.target.value)} className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm">
                   {opts.map((c) => <option key={c} value={c}>{c} — {currencies[c]}</option>)}
                 </select>
@@ -74,24 +77,24 @@ export default function CurrencyConverterPage() {
             </div>
             <Button variant="outline" size="icon" onClick={swap} className="mb-0.5"><ArrowRightLeft className="h-4 w-4" /></Button>
             <div className="space-y-3">
-              <div className="space-y-1.5"><Label>Vers</Label>
+              <div className="space-y-1.5"><Label>{en ? 'To' : 'Vers'}</Label>
                 <select value={to} onChange={(e) => setTo(e.target.value)} className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm">
                   {opts.map((c) => <option key={c} value={c}>{c} — {currencies[c]}</option>)}
                 </select>
               </div>
               <div className="flex h-10 items-center gap-2 rounded-md border bg-primary/5 px-3 text-lg font-bold text-primary">
-                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : (result !== null ? new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 2 }).format(result) + ' ' + to : '—')}
+                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : (result !== null ? new Intl.NumberFormat(en ? 'en-US' : 'fr-FR', { maximumFractionDigits: 2 }).format(result) + ' ' + to : '—')}
               </div>
             </div>
           </div>
           {error && <p className="mt-3 text-sm text-destructive">{error}</p>}
-          {rate !== null && !error && <p className="mt-3 text-sm text-muted-foreground">1 {from} = {new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 4 }).format(rate)} {to}</p>}
+          {rate !== null && !error && <p className="mt-3 text-sm text-muted-foreground">1 {from} = {new Intl.NumberFormat(en ? 'en-US' : 'fr-FR', { maximumFractionDigits: 4 }).format(rate)} {to}</p>}
         </CardContent>
       </Card>
 
       {chart && (
         <Card className="mt-6">
-          <CardHeader><CardTitle>Historique (30 jours) — {from}/{to}</CardTitle></CardHeader>
+          <CardHeader><CardTitle>{en ? '30-day history' : 'Historique (30 jours)'} — {from}/{to}</CardTitle></CardHeader>
           <CardContent>
             <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="h-48 w-full rounded-lg border bg-card">
               <path d={chart.path} fill="none" stroke="hsl(var(--primary))" strokeWidth="1.5" vectorEffect="non-scaling-stroke" />
