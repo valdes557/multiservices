@@ -66,3 +66,14 @@ Date: 2026-06-25
 4. margin-calculator — Marge, taux de marque, profit
 5. percentage-calculator — % de, proportion, variation
 Prochain: Lot 4 — Business & étudiants.
+
+
+
+## Lot 4 — Business & Étudiants ✅ (build Exit 0, 54 routes)
+Date: 2026-06-25
+1. invoice-generator — Facture (lignes, TVA, total, export PDF jsPDF)
+2. quote-generator — Devis (prestations, validité, export PDF)
+3. grade-average — Moyenne pondérée par coefficients (lignes dynamiques)
+4. grade-converter — Conversion /20, /100, GPA/4, lettres A-F, mentions
+5. final-grade — Note nécessaire à l'examen pour atteindre un objectif
+Prochain: Lot 5 — Outils image (Canvas client).
