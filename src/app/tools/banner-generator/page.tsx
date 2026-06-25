@@ -3,6 +3,7 @@ import * as React from 'react';
 import { useRef, useState } from 'react';
 import { Image as ImageIcon, Download, FileDown } from 'lucide-react';
 import { ToolLayout } from '@/components/tools/ToolLayout';
+import { PremiumGate } from '@/components/tools/PremiumGate';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -54,6 +55,7 @@ export default function BannerGeneratorPage() {
 
   return (
     <ToolLayout title="Générateur de bannières publicitaires" description="Créez des bannières pour Facebook, Instagram, Google Ads, LinkedIn et YouTube, puis exportez en PNG ou PDF." icon={<ImageIcon className="h-7 w-7" />} premium>
+      <PremiumGate toolName="Générateur de bannières">
       <div className="mb-6 flex flex-wrap gap-2">
         {formats.map((f) => (
           <button key={f.id} onClick={() => setFmt(f)} className={`rounded-full border px-4 py-1.5 text-sm ${fmt.id === f.id ? 'border-primary bg-primary text-primary-foreground' : 'hover:bg-muted'}`}>
@@ -99,6 +101,7 @@ export default function BannerGeneratorPage() {
           </div>
         </div>
       </div>
+      </PremiumGate>
     </ToolLayout>
   );
 }

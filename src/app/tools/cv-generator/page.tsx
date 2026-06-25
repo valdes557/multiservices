@@ -3,6 +3,7 @@ import * as React from 'react';
 import { useRef, useState } from 'react';
 import { User, Download } from 'lucide-react';
 import { ToolLayout } from '@/components/tools/ToolLayout';
+import { PremiumGate } from '@/components/tools/PremiumGate';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -39,6 +40,7 @@ export default function CvGeneratorPage() {
 
   return (
     <ToolLayout title="Générateur de CV professionnels" description="Créez un CV moderne ou ATS-friendly avec aperçu en temps réel et export PDF." icon={<User className="h-7 w-7" />} premium>
+      <PremiumGate toolName="Générateur de CV">
       <div className="mb-6 flex items-center gap-2">
         <Button variant={tpl === 'modern' ? 'default' : 'outline'} size="sm" onClick={() => setTpl('modern')}>CV moderne</Button>
         <Button variant={tpl === 'ats' ? 'default' : 'outline'} size="sm" onClick={() => setTpl('ats')}>CV ATS-friendly</Button>
@@ -89,6 +91,7 @@ export default function CvGeneratorPage() {
           </div>
         </div>
       </div>
+      </PremiumGate>
     </ToolLayout>
   );
 }

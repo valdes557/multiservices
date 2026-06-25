@@ -38,7 +38,7 @@ export const tools: ToolMeta[] = [
     descFr: 'Estimez vos revenus AdSense quotidiens, mensuels et annuels selon trafic, CTR et CPC.',
     descEn: 'Estimate daily, monthly and yearly AdSense revenue from traffic, CTR and CPC.',
     keywords: ['adsense','revenus','cpc','ctr','rpm','monetisation'] },
-  { slug: 'cv-generator', icon: 'IdCard',
+  { slug: 'cv-generator', icon: 'User',
     titleFr: 'Générateur de CV professionnels', titleEn: 'Professional CV Generator',
     descFr: 'Créez un CV moderne et ATS-friendly avec aperçu en temps réel et export PDF.',
     descEn: 'Create a modern, ATS-friendly resume with live preview and PDF export.',
