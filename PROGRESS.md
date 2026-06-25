@@ -122,3 +122,16 @@ Librairies: pdf-lib + jspdf (déjà installées)
 
 Total nouveaux outils: 39 (Lots 1-7A).
 Reste Lot 7B (services tiers payants à discuter): suppression arrière-plan, plagiat, traduction docs, PDF->Word/Excel fidèle.
+
+
+
+## Lot 7B — Outils à service tiers (prêts à brancher) ✅ (build Exit 0, 81 routes)
+Date: 2026-06-25
+Pattern: route /api/<outil> -> si clé env absente => HTTP 503 SERVICE_NOT_CONFIGURED -> l'UI affiche un encart "service non configuré" avec le nom de la variable à définir. Premium: true.
+1. background-remover — remove.bg (REMOVE_BG_API_KEY)
+2. document-translator — DeepL (DEEPL_API_KEY) — 10 langues
+3. plagiarism-checker — service générique (PLAGIARISM_API_KEY + PLAGIARISM_API_URL)
+4. pdf-to-office — CloudConvert (CLOUDCONVERT_API_KEY) — flux jobs à finaliser
+
+Total nouveaux outils: 43 (Lots 1-7B). Tous les lots terminés.
+Activation: renseigner les clés dans .env.local / variables d'environnement Render-Vercel.
