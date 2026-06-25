@@ -1,4 +1,14 @@
 'use client';
+import { useEffect, useMemo, useState } from 'react';
+import { Coins, ArrowRightLeft, Loader2 } from 'lucide-react';
+import { ToolLayout } from '@/components/tools/ToolLayout';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import { useDebounce } from '@/hooks/useDebounce';
+import { getCurrencies, getLatest, getHistory } from '@/lib/services/currency';
+
 export default function CurrencyConverterPage() {
   const [currencies, setCurrencies] = useState<Record<string, string>>({});
   const [from, setFrom] = useState('EUR');

@@ -1,4 +1,7 @@
 import type { MetadataRoute } from 'next';
+import { tools } from '@/lib/tools';
+import { SITE_URL } from '@/lib/seo';
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
   const staticRoutes = ['', '/tools', '/pricing', '/services', '/auth/login', '/auth/signup'].map((p) => ({

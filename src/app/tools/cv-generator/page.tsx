@@ -1,4 +1,14 @@
 'use client';
+import * as React from 'react';
+import { useRef, useState } from 'react';
+import { User, Download } from 'lucide-react';
+import { ToolLayout } from '@/components/tools/ToolLayout';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+
 type Template = 'modern' | 'ats';
 
 export default function CvGeneratorPage() {
@@ -28,7 +38,7 @@ export default function CvGeneratorPage() {
   const skills = d.skills.split(',').map((s) => s.trim()).filter(Boolean);
 
   return (
-    <ToolLayout title="Générateur de CV professionnels" description="Créez un CV moderne ou ATS-friendly avec aperçu en temps réel et export PDF." icon={<IdCard className="h-7 w-7" />} premium>
+    <ToolLayout title="Générateur de CV professionnels" description="Créez un CV moderne ou ATS-friendly avec aperçu en temps réel et export PDF." icon={<User className="h-7 w-7" />} premium>
       <div className="mb-6 flex items-center gap-2">
         <Button variant={tpl === 'modern' ? 'default' : 'outline'} size="sm" onClick={() => setTpl('modern')}>CV moderne</Button>
         <Button variant={tpl === 'ats' ? 'default' : 'outline'} size="sm" onClick={() => setTpl('ats')}>CV ATS-friendly</Button>

@@ -1,4 +1,11 @@
 import Link from 'next/link';
+import { tools } from '@/lib/tools';
+import { ToolIcon } from '@/components/tools/ToolIcon';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { buildMetadata } from '@/lib/seo';
+import { ArrowRight } from 'lucide-react';
+
 export const metadata = buildMetadata({
   title: 'Outils gratuits en ligne — MultiServices',
   description: 'Convertisseur de devises, calculateur de prêt, générateur de CV, documents administratifs, bannières et plus. Tous vos outils en un seul endroit.',

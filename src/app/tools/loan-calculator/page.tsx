@@ -1,4 +1,11 @@
 'use client';
+import { useMemo, useState } from 'react';
+import { Landmark } from 'lucide-react';
+import { ToolLayout } from '@/components/tools/ToolLayout';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+
 interface Row { month: number; payment: number; principal: number; interest: number; balance: number; }
 
 function computeAmortization(amount: number, annualRate: number, years: number) {

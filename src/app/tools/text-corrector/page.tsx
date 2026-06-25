@@ -1,4 +1,13 @@
 'use client';
+import { useState } from 'react';
+import { SpellCheck, Wand2, Copy, Loader2, Check } from 'lucide-react';
+import { ToolLayout } from '@/components/tools/ToolLayout';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { modeLabels, transformText } from '@/lib/textTools';
+import type { TextMode } from '@/lib/textTools';
+
 const modes = Object.keys(modeLabels) as TextMode[];
 
 export default function TextCorrectorPage() {

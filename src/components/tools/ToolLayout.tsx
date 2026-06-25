@@ -1,6 +1,9 @@
 'use client';
 import React from 'react';
 import Link from 'next/link';
+import { ChevronLeft } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+
 export function ToolLayout({ title, description, icon, premium, children }: {
   title: string; description: string; icon?: React.ReactNode; premium?: boolean; children: React.ReactNode;
 }) {

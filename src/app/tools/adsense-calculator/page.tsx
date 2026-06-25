@@ -1,4 +1,11 @@
 'use client';
+import { useMemo, useState } from 'react';
+import { TrendingUp } from 'lucide-react';
+import { ToolLayout } from '@/components/tools/ToolLayout';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+
 const fmt = (v: number) => new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 }).format(v);
 
 export default function AdsenseCalculatorPage() {
