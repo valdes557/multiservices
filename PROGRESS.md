@@ -55,3 +55,14 @@ Date: 2026-06-25
 
 Note technique: writeToFile supprime les imports nommés → utiliser applyFix(rel, useClient, importsArr) pour (ré)injecter. ToolLayout attend title/description (pas slug).
 Prochain: Lot 3 — Finance.
+
+
+
+## Lot 3 — Outils Finance ✅ (build Exit 0, 49 routes)
+Date: 2026-06-25
+1. compound-interest — Intérêts composés + versements mensuels
+2. savings-calculator — Épargne mensuelle nécessaire vs objectif
+3. vat-calculator — TVA HT/TTC, taux FR (20/10/5.5/2.1/0)
+4. margin-calculator — Marge, taux de marque, profit
+5. percentage-calculator — % de, proportion, variation
+Prochain: Lot 4 — Business & étudiants.
