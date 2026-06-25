@@ -77,3 +77,15 @@ Date: 2026-06-25
 4. grade-converter — Conversion /20, /100, GPA/4, lettres A-F, mentions
 5. final-grade — Note nécessaire à l'examen pour atteindre un objectif
 Prochain: Lot 5 — Outils image (Canvas client).
+
+
+
+## Lot 5 — Outils Image ✅ (build Exit 0, 59 routes)
+Date: 2026-06-25
+Tous 100% Canvas côté client (aucun upload serveur, confidentialité totale)
+1. image-compress — Compression JPG avec curseur qualité + gain en %
+2. image-convert — Conversion JPG/PNG/WEBP
+3. image-resize — Redimensionnement avec verrouillage des proportions
+4. image-watermark — Filigrane texte (opacité, taille, 5 positions)
+5. image-crop — Recadrage par ratio (1:1, 16:9, 4:3, 3:4, 3:2)
+Prochain: Lot 6 — Outils IA (OPENAI_API_KEY avec fallback local).
