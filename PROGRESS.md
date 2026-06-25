@@ -108,3 +108,17 @@ Lib fallback: src/lib/aiTools.ts (runLocal + aiPrompts)
 
 Variables d'env à ajouter pour activer l'IA: OPENAI_API_KEY (+ optionnel OPENAI_MODEL). Sans clé, fallback local fonctionne déjà.
 Prochain: Lot 7 — Outils nécessitant API tierce / budget (PDF avancé, suppression arrière-plan, plagiat, traduction docs) — à discuter.
+
+
+
+## Lot 7A — Outils PDF (gratuit, 100% client-side) ✅ (build Exit 0, 73 routes)
+Date: 2026-06-25
+Librairies: pdf-lib + jspdf (déjà installées)
+1. jpg-to-pdf — Images JPG/PNG → PDF (multi-pages)
+2. pdf-merge — Fusion de plusieurs PDF en un seul
+3. pdf-split — Découpe / extraction de pages
+4. pdf-rotate — Rotation de pages
+5. pdf-watermark — Filigrane texte sur PDF
+
+Total nouveaux outils: 39 (Lots 1-7A).
+Reste Lot 7B (services tiers payants à discuter): suppression arrière-plan, plagiat, traduction docs, PDF->Word/Excel fidèle.
