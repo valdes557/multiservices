@@ -89,3 +89,22 @@ Tous 100% Canvas côté client (aucun upload serveur, confidentialité totale)
 4. image-watermark — Filigrane texte (opacité, taille, 5 positions)
 5. image-crop — Recadrage par ratio (1:1, 16:9, 4:3, 3:4, 3:2)
 Prochain: Lot 6 — Outils IA (OPENAI_API_KEY avec fallback local).
+
+
+
+## Lot 6 — Outils IA ✅ (build Exit 0, 68 routes)
+Date: 2026-06-25
+Architecture: route /api/ai (OpenAI gpt-4o-mini si OPENAI_API_KEY, sinon fallback local intelligent)
+Composant réutilisable: src/components/tools/AiToolForm.tsx
+Lib fallback: src/lib/aiTools.ts (runLocal + aiPrompts)
+1. text-summarizer — Résumé extractif par mots-clés
+2. text-rephraser — Reformulation
+3. grammar-checker — Correction orthographe/grammaire/ponctuation
+4. email-generator — E-mail pro (sujet + ton)
+5. product-description — Description produit (nom + caractéristiques)
+6. social-post — Post réseaux sociaux + hashtags
+7. youtube-title — 5 titres accrocheurs
+8. hashtag-generator — Hashtags pertinents
+
+Variables d'env à ajouter pour activer l'IA: OPENAI_API_KEY (+ optionnel OPENAI_MODEL). Sans clé, fallback local fonctionne déjà.
+Prochain: Lot 7 — Outils nécessitant API tierce / budget (PDF avancé, suppression arrière-plan, plagiat, traduction docs) — à discuter.
