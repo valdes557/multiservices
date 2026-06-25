@@ -1,0 +1,5 @@
+const t = getTool('unit-converter')!;
+export const metadata = buildMetadata({ title: t.titleFr + ' — MultiServices', description: t.descFr, path: '/tools/unit-converter', keywords: t.keywords });
+export default function Layout({ children }: { children: React.ReactNode }) {
+  return (<><JsonLd data={softwareAppJsonLd({ name: t.titleFr, description: t.descFr, path: '/tools/unit-converter' })} />{children}</>);
+}

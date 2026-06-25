@@ -20,8 +20,8 @@
 - [ ] Outil 2 — Générateur de documents admin (10 modèles, formulaire, export PDF)
 - [ ] Outil 3 — Correction & reformulation de texte (éditeur, 6 modes)
 - [x] Outil 4 — Calculateur de prêt (mensualité, amortissement, graphiques)
-- [ ] Outil 5 — Convertisseur universel (10 catégories d'unités)
-- [ ] Outil 6 — Vérificateur rentabilité AdSense (+ graphiques)
+- [x] Outil 5 — Convertisseur universel (10 catégories d'unités)
+- [x] Outil 6 — Vérificateur rentabilité AdSense (+ graphiques)
 - [ ] Outil 7 — Générateur de CV pro (modèles, aperçu live, PDF, ATS)
 - [ ] Outil 8 — Générateur de bannières (5 formats, PNG/PDF)
 
