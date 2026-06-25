@@ -28,6 +28,7 @@ export default function Navbar() {
   const navLinks = [
     { href: '/', label: t('common.home') as string },
     { href: '/services', label: t('common.services') as string },
+    { href: '/tools', label: 'Outils' },
     { href: '/pricing', label: t('common.pricing') as string },
   ];
 

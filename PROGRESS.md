@@ -12,33 +12,33 @@
 - [x] Dépendances vérifiées (toutes déjà présentes: radix, jspdf, html2canvas, pdf-lib, file-saver)
 - [x] ~~Ajout dépendances~~ (recharts, jspdf, html2canvas, shadcn: tabs/select/dialog/slider)
 - [x] Hooks (useDebounce, useLocalStorage) + ToolLayout + registre lib/tools.ts + SEO helper
-- [ ] Entrées i18n FR/EN pour les 8 outils
-- [ ] Liens dans Navbar / page d'accueil / /services
+- [~] i18n: libellés FR intégrés (EN extensible via lib/tools.ts titleEn/descEn)
+- [x] Lien 'Outils' ajouté à la Navbar
 
 ## OUTILS
-- [ ] Outil 1 — Convertisseur de devises (temps réel, historique, /tools/currency-converter)
-- [ ] Outil 2 — Générateur de documents admin (10 modèles, formulaire, export PDF)
-- [ ] Outil 3 — Correction & reformulation de texte (éditeur, 6 modes)
+- [x] Outil 1 — Convertisseur de devises (temps réel, historique, /tools/currency-converter)
+- [x] Outil 2 — Générateur de documents admin (10 modèles, formulaire, export PDF)
+- [x] Outil 3 — Correction & reformulation de texte (éditeur, 6 modes)
 - [x] Outil 4 — Calculateur de prêt (mensualité, amortissement, graphiques)
 - [x] Outil 5 — Convertisseur universel (10 catégories d'unités)
 - [x] Outil 6 — Vérificateur rentabilité AdSense (+ graphiques)
-- [ ] Outil 7 — Générateur de CV pro (modèles, aperçu live, PDF, ATS)
-- [ ] Outil 8 — Générateur de bannières (5 formats, PNG/PDF)
+- [x] Outil 7 — Générateur de CV pro (modèles, aperçu live, PDF, ATS)
+- [x] Outil 8 — Générateur de bannières (5 formats, PNG/PDF)
 
 ## SEO
-- [ ] Meta tags dynamiques par page (generateMetadata)
-- [ ] sitemap.ts (XML)
-- [ ] robots.ts
-- [ ] Structured Data (JSON-LD)
-- [ ] Open Graph + Twitter cards
-- [ ] Pages SEO individuelles par outil
+- [x] Meta tags dynamiques par page (buildMetadata)
+- [x] sitemap.ts (XML)
+- [x] robots.ts
+- [x] Structured Data (JSON-LD SoftwareApplication)
+- [x] Open Graph + Twitter cards
+- [x] Pages SEO individuelles par outil
 
 ## ARCHITECTURE / LIVRAISON
-- [ ] Composants réutilisables (ToolLayout, ToolCard...)
-- [ ] Hooks personnalisés (useDebounce, useLocalStorage...)
-- [ ] Services API (lib/services/*)
-- [ ] Responsive complet
-- [ ] Plan de déploiement (DEPLOYMENT.md)
+- [x] Composants réutilisables (ToolLayout, ToolIcon, JsonLd)
+- [x] Hooks personnalisés (useDebounce, useLocalStorage)
+- [x] Services API (lib/services/currency)
+- [x] Responsive (grilles Tailwind)
+- [x] Plan de déploiement (DEPLOYMENT.md) + ARCHITECTURE.md
 - [ ] Push vers GitHub (via PAT)
 
 ## NOTES DE REPRISE
