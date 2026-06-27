@@ -23,22 +23,18 @@ export async function POST(request: NextRequest) {
 
     const hashedPassword = await hashPassword(password);
 
-    const trialStart = new Date();
-    const trialEnd = new Date(trialStart.getTime() + 3 * 24 * 60 * 60 * 1000);
-
+    // New users start with no plan; they pick one (which starts its trial) afterward.
     const user = await User.create({
       name,
       email: email.toLowerCase(),
       password: hashedPassword,
       role: 'user',
       subscription: {
-        plan: 'premium',
-        trialStartDate: trialStart,
-        trialEndDate: trialEnd,
-        trialUsed: true,
-        startDate: trialStart,
-        endDate: trialEnd,
-        isActive: true,
+        planKey: null,
+        status: 'none',
+        adsEnabled: false,
+        activatedByAdmin: false,
+        disabledByAdmin: false,
       },
     });
 
@@ -56,13 +52,7 @@ export async function POST(request: NextRequest) {
         email: user.email,
         role: user.role,
         locale: user.locale,
-        subscription: {
-          plan: user.subscription.plan,
-          trialStartDate: user.subscription.trialStartDate,
-          trialEndDate: user.subscription.trialEndDate,
-          trialUsed: user.subscription.trialUsed,
-          isActive: user.subscription.isActive,
-        },
+        subscription: user.subscription,
       },
     }, { status: 201 });
   } catch (error) {

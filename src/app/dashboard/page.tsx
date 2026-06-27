@@ -15,7 +15,7 @@ import {
 
 export default function DashboardPage() {
   const { t } = useLocale();
-  const { user, isPremium, isTrialActive } = useAuth();
+  const { user, isPremium, isTrialActive, hasPremiumAccess } = useAuth();
 
   if (!user) {
     return (
@@ -95,9 +95,9 @@ export default function DashboardPage() {
               <CardTitle className="text-base">Utilisations</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">{user.subscription.plan === 'free' ? '5/10' : '∞'}</div>
+              <div className="text-3xl font-bold">{hasPremiumAccess() ? '∞' : '5/10'}</div>
               <p className="text-sm text-muted-foreground mt-1">
-                {user.subscription.plan === 'free' ? 'actions restantes aujourd\'hui' : 'Illimité'}
+                {hasPremiumAccess() ? 'Illimité' : 'actions restantes aujourd\'hui'}
               </p>
             </CardContent>
           </Card>
