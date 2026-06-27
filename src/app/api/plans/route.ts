@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Plan from '@/models/Plan';
 
+export const dynamic = 'force-dynamic';
+
 // GET /api/plans — public list of active plans (for the pricing page).
 export async function GET() {
   try {

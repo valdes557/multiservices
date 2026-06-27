@@ -23,12 +23,16 @@ export async function POST(request: NextRequest) {
 
     const hashedPassword = await hashPassword(password);
 
+    // Bootstrap: the configured ADMIN_EMAIL is promoted to administrator on signup.
+    const adminEmail = process.env.ADMIN_EMAIL?.toLowerCase();
+    const role = adminEmail && email.toLowerCase() === adminEmail ? 'admin' : 'user';
+
     // New users start with no plan; they pick one (which starts its trial) afterward.
     const user = await User.create({
       name,
       email: email.toLowerCase(),
       password: hashedPassword,
-      role: 'user',
+      role,
       subscription: {
         planKey: null,
         status: 'none',

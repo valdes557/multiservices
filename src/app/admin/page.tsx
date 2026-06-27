@@ -7,13 +7,19 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import {
-  Shield, Users, Layers, Wrench, RefreshCw, Plus, Trash2, Save,
+  Shield, Users, Layers, Wrench, RefreshCw, Plus, Trash2, Save, Megaphone,
 } from 'lucide-react';
 import {
   adminFetch, type AdminPlan, type AdminTool, type AdminUser,
 } from '@/lib/adminApi';
 
-type Tab = 'plans' | 'tools' | 'users';
+type Tab = 'plans' | 'tools' | 'users' | 'settings';
+
+interface AdminSettings {
+  adsenseApproved: boolean;
+  adsenseClientId: string;
+  adsenseSlotId: string;
+}
 
 const STATUS_COLORS: Record<string, string> = {
   trial: 'bg-amber-100 text-amber-700',
@@ -29,6 +35,7 @@ export default function AdminPage() {
   const [plans, setPlans] = useState<AdminPlan[]>([]);
   const [tools, setTools] = useState<AdminTool[]>([]);
   const [users, setUsers] = useState<AdminUser[]>([]);
+  const [settings, setSettings] = useState<AdminSettings | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -36,14 +43,16 @@ export default function AdminPage() {
     if (!token) return;
     setError(null);
     try {
-      const [p, t, u] = await Promise.all([
+      const [p, t, u, s] = await Promise.all([
         adminFetch('/api/admin/plans', token),
         adminFetch('/api/admin/tools', token),
         adminFetch('/api/admin/users', token),
+        adminFetch('/api/admin/settings', token),
       ]);
       setPlans(p.plans);
       setTools(t.tools);
       setUsers(u.users);
+      setSettings(s.settings);
     } catch (e) {
       setError((e as Error).message);
     }
@@ -78,6 +87,7 @@ export default function AdminPage() {
     { id: 'plans', label: 'Plans', icon: <Layers className="h-4 w-4" /> },
     { id: 'tools', label: 'Outils', icon: <Wrench className="h-4 w-4" /> },
     { id: 'users', label: 'Utilisateurs', icon: <Users className="h-4 w-4" /> },
+    { id: 'settings', label: 'Paramètres', icon: <Megaphone className="h-4 w-4" /> },
   ];
 
   return (
@@ -120,8 +130,63 @@ export default function AdminPage() {
         {tab === 'plans' && <PlansPanel plans={plans} token={token} reload={load} setError={setError} />}
         {tab === 'tools' && <ToolsPanel tools={tools} plans={plans} token={token} reload={load} setError={setError} />}
         {tab === 'users' && <UsersPanel users={users} plans={plans} token={token} reload={load} setError={setError} />}
+        {tab === 'settings' && <SettingsPanel settings={settings} token={token} reload={load} setError={setError} />}
       </div>
     </div>
+  );
+}
+
+/* ------------------------------------------------------------- Settings */
+
+function SettingsPanel({ settings, token, reload, setError }: {
+  settings: AdminSettings | null; token: string | null; reload: () => Promise<void>; setError: (s: string | null) => void;
+}) {
+  const [approved, setApproved] = useState(!!settings?.adsenseApproved);
+  const [clientId, setClientId] = useState(settings?.adsenseClientId || '');
+  const [slotId, setSlotId] = useState(settings?.adsenseSlotId || '');
+  const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    setApproved(!!settings?.adsenseApproved);
+    setClientId(settings?.adsenseClientId || '');
+    setSlotId(settings?.adsenseSlotId || '');
+  }, [settings]);
+
+  const save = async () => {
+    setError(null); setSaved(false);
+    try {
+      await adminFetch('/api/admin/settings', token, {
+        method: 'PUT',
+        body: JSON.stringify({ adsenseApproved: approved, adsenseClientId: clientId, adsenseSlotId: slotId }),
+      });
+      setSaved(true);
+      await reload();
+    } catch (e) { setError((e as Error).message); }
+  };
+
+  return (
+    <Card>
+      <CardHeader><CardTitle className="text-base flex items-center gap-2"><Megaphone className="h-4 w-4" /> Google AdSense</CardTitle></CardHeader>
+      <CardContent className="space-y-4 max-w-xl">
+        <p className="text-sm text-muted-foreground">
+          Les publicités ne s&apos;affichent (et uniquement pendant l&apos;essai gratuit) que si AdSense a approuvé le site
+          <strong> et</strong> qu&apos;un client-id est renseigné.
+        </p>
+        <Toggle label="AdSense a approuvé l'affichage des publicités" checked={approved} onChange={setApproved} />
+        <label className="text-xs text-muted-foreground block">
+          Client ID (ca-pub-…)
+          <Input value={clientId} onChange={(e) => setClientId(e.target.value)} placeholder="ca-pub-XXXXXXXXXXXXXXXX" />
+        </label>
+        <label className="text-xs text-muted-foreground block">
+          Slot ID par défaut (optionnel)
+          <Input value={slotId} onChange={(e) => setSlotId(e.target.value)} placeholder="1234567890" />
+        </label>
+        <div className="flex items-center gap-3">
+          <Button onClick={save}><Save className="h-4 w-4 mr-1" /> Enregistrer</Button>
+          {saved && <span className="text-sm text-green-600">Enregistré ✓</span>}
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 
