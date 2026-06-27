@@ -1,42 +1,31 @@
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import User from '@/models/User';
-import Payment from '@/models/Payment';
-import { verifyToken } from '@/lib/auth';
+import Plan from '@/models/Plan';
+import { requireUser } from '@/lib/apiAuth';
+import { syncSubscriptionStatus, serializeUser } from '@/lib/userSync';
 
-// GET - Get subscription status
+const DAY = 24 * 60 * 60 * 1000;
+
+// GET /api/subscription — current subscription + the plan details.
 export async function GET(request: NextRequest) {
+  const guard = requireUser(request);
+  if ('error' in guard) return guard.error;
+
   try {
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader?.startsWith('Bearer ')) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const decoded = verifyToken(authHeader.split(' ')[1]);
-    if (!decoded) {
-      return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
-    }
-
     await dbConnect();
-    const user = await User.findById(decoded.userId).select('subscription');
-    if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
-    }
+    const user = await User.findById(guard.user.userId);
+    if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 });
 
-    const payments = await Payment.find({ userId: user._id })
-      .sort({ createdAt: -1 })
-      .limit(10);
+    if (syncSubscriptionStatus(user)) await user.save();
+
+    const plan = user.subscription.planKey
+      ? await Plan.findOne({ key: user.subscription.planKey }).lean()
+      : null;
 
     return NextResponse.json({
-      subscription: user.subscription,
-      payments: payments.map((p) => ({
-        id: p._id.toString(),
-        amount: p.amount,
-        currency: p.currency,
-        method: p.paymentMethod,
-        status: p.status,
-        createdAt: p.createdAt,
-      })),
+      subscription: serializeUser(user).subscription,
+      plan,
     });
   } catch (error) {
     console.error('Subscription GET error:', error);
@@ -44,78 +33,53 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST - Create/upgrade subscription (initiate payment)
+// POST /api/subscription — { action: 'selectPlan', planKey }
+// Starts the plan's free trial (if any); otherwise marks it as pending payment.
 export async function POST(request: NextRequest) {
+  const guard = requireUser(request);
+  if ('error' in guard) return guard.error;
+
   try {
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader?.startsWith('Bearer ')) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const decoded = verifyToken(authHeader.split(' ')[1]);
-    if (!decoded) {
-      return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
-    }
-
     await dbConnect();
-    const { paymentMethod, transactionId } = await request.json();
+    const { action, planKey } = await request.json();
+    const user = await User.findById(guard.user.userId);
+    if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 });
 
-    if (!paymentMethod || !transactionId) {
-      return NextResponse.json(
-        { error: 'Payment method and transaction ID are required' },
-        { status: 400 }
-      );
+    if (action !== 'selectPlan') {
+      return NextResponse.json({ error: `Unknown action: ${action}` }, { status: 400 });
     }
 
-    const user = await User.findById(decoded.userId);
-    if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    const plan = await Plan.findOne({ key: planKey, active: true });
+    if (!plan) return NextResponse.json({ error: 'Plan not found or inactive' }, { status: 404 });
+
+    if (user.subscription.disabledByAdmin) {
+      return NextResponse.json({ error: 'Your account plan was disabled by an administrator' }, { status: 403 });
     }
 
-    // Create payment record
-    const payment = await Payment.create({
-      userId: user._id,
-      amount: 9.99,
-      currency: 'USD',
-      paymentMethod,
-      status: 'pending',
-      transactionId,
-      metadata: {
-        plan: 'premium',
-        duration: '1 month',
-      },
-    });
-
-    // In production: verify the transaction with the payment provider
-    // For now, we auto-confirm for demonstration
-    payment.status = 'completed';
-    await payment.save();
-
-    // Upgrade user subscription
     const now = new Date();
-    const endDate = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000); // 30 days
+    const sub = user.subscription;
+    sub.planKey = plan.key;
+    sub.activatedByAdmin = false;
+    sub.startDate = null;
+    sub.endDate = null;
 
-    user.subscription.plan = 'premium';
-    user.subscription.startDate = now;
-    user.subscription.endDate = endDate;
-    user.subscription.isActive = true;
+    const alreadyTrialedThisPlan = sub.trialStartDate && sub.planKey === plan.key;
+    if (plan.trialDays > 0 && !alreadyTrialedThisPlan) {
+      sub.status = 'trial';
+      sub.trialStartDate = now;
+      sub.trialEndDate = new Date(now.getTime() + plan.trialDays * DAY);
+      sub.adsEnabled = plan.adsDuringTrial;
+    } else {
+      // No trial available -> requires payment to unlock (handled in Phase 3).
+      sub.status = 'expired';
+      sub.adsEnabled = false;
+    }
+
     await user.save();
-
     return NextResponse.json({
-      message: 'Subscription activated successfully',
-      subscription: {
-        plan: user.subscription.plan,
-        startDate: user.subscription.startDate,
-        endDate: user.subscription.endDate,
-        isActive: user.subscription.isActive,
-      },
-      payment: {
-        id: payment._id.toString(),
-        amount: payment.amount,
-        currency: payment.currency,
-        status: payment.status,
-      },
-    }, { status: 201 });
+      message: sub.status === 'trial' ? 'Trial started' : 'Plan selected — payment required',
+      user: serializeUser(user, now),
+    });
   } catch (error) {
     console.error('Subscription POST error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

@@ -2,19 +2,29 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
+export type SubscriptionStatus = 'none' | 'trial' | 'active' | 'expired' | 'disabled';
+
+export interface UserSubscription {
+  planKey: string | null;
+  status: SubscriptionStatus;
+  effectiveStatus: SubscriptionStatus;
+  trialStartDate: string | null;
+  trialEndDate: string | null;
+  startDate: string | null;
+  endDate: string | null;
+  adsEnabled: boolean;
+  activatedByAdmin: boolean;
+  disabledByAdmin: boolean;
+  trialDaysLeft: number;
+}
+
 interface User {
   id: string;
   name: string;
   email: string;
   role: 'user' | 'admin';
   locale: 'fr' | 'en';
-  subscription: {
-    plan: 'free' | 'premium';
-    trialStartDate: string | null;
-    trialEndDate: string | null;
-    trialUsed: boolean;
-    isActive: boolean;
-  };
+  subscription: UserSubscription;
 }
 
 interface AuthContextType {
@@ -24,8 +34,10 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   signup: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
+  refresh: () => Promise<void>;
   isPremium: () => boolean;
   isTrialActive: () => boolean;
+  hasPremiumAccess: () => boolean;
   isAdmin: () => boolean;
 }
 
@@ -36,8 +48,10 @@ const AuthContext = createContext<AuthContextType>({
   login: async () => {},
   signup: async () => {},
   logout: () => {},
+  refresh: async () => {},
   isPremium: () => false,
   isTrialActive: () => false,
+  hasPremiumAccess: () => false,
   isAdmin: () => false,
 });
 
@@ -91,15 +105,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem('user');
   }, []);
 
+  // Re-fetch the current user (e.g. after selecting a plan or a payment).
+  const refresh = useCallback(async () => {
+    const savedToken = token || localStorage.getItem('token');
+    if (!savedToken) return;
+    const res = await fetch('/api/auth/me', {
+      headers: { Authorization: `Bearer ${savedToken}` },
+    });
+    if (!res.ok) return;
+    const data = await res.json();
+    setUser(data.user);
+    localStorage.setItem('user', JSON.stringify(data.user));
+  }, [token]);
+
   const isPremium = useCallback(() => {
-    if (!user) return false;
-    return user.subscription.plan === 'premium' && user.subscription.isActive;
+    return user?.subscription.effectiveStatus === 'active';
   }, [user]);
 
   const isTrialActive = useCallback(() => {
-    if (!user) return false;
-    if (!user.subscription.trialEndDate) return false;
-    return new Date(user.subscription.trialEndDate) > new Date();
+    return user?.subscription.effectiveStatus === 'trial';
+  }, [user]);
+
+  const hasPremiumAccess = useCallback(() => {
+    const s = user?.subscription.effectiveStatus;
+    return s === 'trial' || s === 'active';
   }, [user]);
 
   const isAdmin = useCallback(() => {
@@ -107,7 +136,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [user]);
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, signup, logout, isPremium, isTrialActive, isAdmin }}>
+    <AuthContext.Provider value={{ user, token, loading, login, signup, logout, refresh, isPremium, isTrialActive, hasPremiumAccess, isAdmin }}>
       {children}
     </AuthContext.Provider>
   );

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import User from '@/models/User';
 import { verifyPassword, generateToken } from '@/lib/auth';
+import { syncSubscriptionStatus, serializeUser } from '@/lib/userSync';
 
 export async function POST(request: NextRequest) {
   try {
@@ -22,15 +23,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
 
-    // Check trial expiration
-    if (
-      user.subscription.plan === 'premium' &&
-      user.subscription.trialUsed &&
-      user.subscription.trialEndDate &&
-      new Date(user.subscription.trialEndDate) < new Date()
-    ) {
-      user.subscription.plan = 'free';
-      user.subscription.isActive = false;
+    // Persist any lapsed trial / paid period before returning.
+    if (syncSubscriptionStatus(user)) {
       await user.save();
     }
 
@@ -42,20 +36,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       token,
-      user: {
-        id: user._id.toString(),
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        locale: user.locale,
-        subscription: {
-          plan: user.subscription.plan,
-          trialStartDate: user.subscription.trialStartDate,
-          trialEndDate: user.subscription.trialEndDate,
-          trialUsed: user.subscription.trialUsed,
-          isActive: user.subscription.isActive,
-        },
-      },
+      user: serializeUser(user),
     });
   } catch (error) {
     console.error('Login error:', error);
