@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { useLocale } from '@/context/LocaleContext';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -10,13 +11,13 @@ import { Label } from '@/components/ui/label';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import {
   Palette, Image, Youtube, ScrollText, Video,
-  Sparkles, Download, Copy, Check,
+  Sparkles, Download, Copy, Check, LayoutTemplate,
 } from 'lucide-react';
 
 type ContentTab = 'banner' | 'thumbnail' | 'description' | 'script';
 
 export default function ContentPage() {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
   const { isPremium, isTrialActive } = useAuth();
   const [activeTab, setActiveTab] = useState<ContentTab>('banner');
   const [generating, setGenerating] = useState(false);
@@ -68,6 +69,22 @@ export default function ContentPage() {
             <p className="text-muted-foreground">{t('categories.contentDesc') as string}</p>
           </div>
         </div>
+
+        {/* Featured: Flyer generator */}
+        <Link href="/services/content/flyer" className="block mb-6">
+          <div className="flex items-center justify-between gap-4 rounded-xl border bg-gradient-to-r from-pink-500/10 to-violet-500/10 p-4 hover:shadow-md transition-shadow">
+            <div className="flex items-center gap-3">
+              <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-pink-500/15 text-pink-600">
+                <LayoutTemplate className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="font-semibold">{locale === 'en' ? 'Professional Flyer Generator' : 'Générateur de flyers professionnels'}</p>
+                <p className="text-sm text-muted-foreground">{locale === 'en' ? 'Design & export print-ready flyers (PNG / PDF)' : 'Créez et exportez des flyers prêts à imprimer (PNG / PDF)'}</p>
+              </div>
+            </div>
+            <Button size="sm" variant="outline">{locale === 'en' ? 'Open' : 'Ouvrir'}</Button>
+          </div>
+        </Link>
 
         {/* Tabs */}
         <div className="flex gap-2 mb-8 border-b pb-4 overflow-x-auto">
