@@ -86,14 +86,17 @@ JWT (jsonwebtoken + bcryptjs). Compte admin de référence : `valdeslando15@gmai
 - [x] Variables d'env SMTP documentées dans `.env.example`. Fallback dev : code renvoyé
       dans la réponse si SMTP non configuré.
 
-### ⬜ Phase D — Paiement Mobile Money par plan (exigences 9, 10, 14)
-- [ ] `POST /api/payment/initiate` → SebPay `POST /collections`.
-- [ ] `GET /api/payment/status/:ref` → SebPay `GET /collections/{id_or_reference}`.
-- [ ] `POST /api/webhooks/sebpay` → vérif HMAC-SHA256 (`X-SebPay-Signature`), idempotent ;
-      sur `approved` → activer l'abonnement mensuel + **bloquer les pubs**.
-- [ ] Étendre `Payment` (operator, phone, transactionId, externalReference, planKey, mode).
-- [ ] UI : sur `subscribe`/`pricing`, payer un plan (choix opérateur Orange/MTN/Moov/Wave +
-      numéro). Pendant l'essai : bouton « Payer pour arrêter les pubs ».
+### ✅ Phase D — Paiement Mobile Money par plan (exigences 9, 10, 14)
+- [x] `lib/sebpay.ts` (initiateCollection, getCollectionStatus, verifyWebhookSignature HMAC,
+      normalizeStatus) + `lib/billing.ts` (applyPaidSubscription → active + bloque les pubs).
+- [x] `POST /api/payment/initiate` → SebPay `POST /collections` (callback_url auto).
+- [x] `GET /api/payment/status/:ref` → re-check SebPay si pending (fallback webhook).
+- [x] `POST /api/webhooks/sebpay` → vérif HMAC-SHA256, idempotent ; sur `approved` →
+      `applyPaidSubscription` (status active, +1 mois, **pubs bloquées**).
+- [x] `Payment` étendu (planKey, operator, phone, externalReference unique, transactionId, mode).
+- [x] UI `subscribe` : sélection plan + opérateur (Orange/MTN/Moov/Wave) + numéro + OTP,
+      paiement + polling du statut, message « Payer maintenant pour arrêter les pubs » en essai.
+      `TrialAd` pointe vers `/subscribe`.
 
 ### ⬜ Phase E — Forums par plan (exigences 15, 16, 17)
 - [ ] Modèle `ForumMessage` (planKey, userId, author, type: text|image|voice, content,

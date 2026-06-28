@@ -79,7 +79,7 @@ export default function TrialAd({ className = '' }: { className?: string }) {
       )}
       <div className="mt-1 flex items-center justify-center gap-3 text-[11px] text-muted-foreground">
         <span>{label}</span>
-        <Link href="/pricing" className="underline hover:text-foreground">{upsell}</Link>
+        <Link href="/subscribe" className="underline hover:text-foreground">{upsell}</Link>
       </div>
     </div>
   );
