@@ -502,7 +502,83 @@ function SettingsPanel({ token, setError }: { token: string | null; setError: (s
         </CardContent>
       </Card>
 
+      <PaymentKeysCard token={token} setError={setError} onApplied={load} />
+
       <Button onClick={save}><Save className="h-4 w-4 mr-1" /> Enregistrer les réglages</Button>
     </div>
+  );
+}
+
+/* ----------------------------------------------- Payment keys (email-confirmed) */
+
+function PaymentKeysCard({ token, setError, onApplied }: {
+  token: string | null; setError: (s: string | null) => void; onApplied: () => Promise<void>;
+}) {
+  const [keys, setKeys] = useState({ publicKeyTest: '', secretKeyTest: '', publicKeyLive: '', secretKeyLive: '' });
+  const [reqId, setReqId] = useState<string | null>(null);
+  const [sentTo, setSentTo] = useState('');
+  const [devCode, setDevCode] = useState<string | null>(null);
+  const [code, setCode] = useState('');
+  const [msg, setMsg] = useState<string | null>(null);
+  const setKey = (k: keyof typeof keys, v: string) => setKeys((s) => ({ ...s, [k]: v }));
+
+  const request = async () => {
+    setError(null); setMsg(null); setDevCode(null);
+    const changes: Record<string, string> = {};
+    (Object.keys(keys) as (keyof typeof keys)[]).forEach((k) => { if (keys[k].trim()) changes[k] = keys[k].trim(); });
+    if (Object.keys(changes).length === 0) { setError('Renseignez au moins une clé à modifier.'); return; }
+    try {
+      const d = await adminFetch('/api/admin/payment-config/request', token, { method: 'POST', body: JSON.stringify({ changes }) });
+      setReqId(d.id); setSentTo(d.sentTo);
+      setDevCode(d.devCode || null);
+      setMsg(d.emailed ? `Un code de confirmation a été envoyé à ${d.sentTo}.` : `SMTP non configuré : code affiché ci-dessous (mode dev).`);
+    } catch (e) { setError((e as Error).message); }
+  };
+
+  const confirm = async () => {
+    setError(null);
+    if (!reqId || !code.trim()) return;
+    try {
+      await adminFetch('/api/admin/payment-config/confirm', token, { method: 'POST', body: JSON.stringify({ id: reqId, code: code.trim() }) });
+      setReqId(null); setCode(''); setDevCode(null);
+      setKeys({ publicKeyTest: '', secretKeyTest: '', publicKeyLive: '', secretKeyLive: '' });
+      setMsg('Clés de paiement mises à jour ✓');
+      await onApplied();
+    } catch (e) { setError((e as Error).message); }
+  };
+
+  return (
+    <Card>
+      <CardHeader><CardTitle className="text-base">Clés de paiement SebPay (confirmation par email)</CardTitle></CardHeader>
+      <CardContent className="space-y-3">
+        <p className="text-xs text-muted-foreground">
+          Toute modification/suppression de clé exige un code envoyé par email au propriétaire.
+          Laisser vide = inchangé. Pour <b>supprimer</b> une clé, saisir un espace puis demander le code.
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <label className="text-xs text-muted-foreground">Public key TEST (pk_test_…)<Input value={keys.publicKeyTest} onChange={(e) => setKey('publicKeyTest', e.target.value)} placeholder="pk_test_…" /></label>
+          <label className="text-xs text-muted-foreground">Secret key TEST (sk_test_…)<Input type="password" value={keys.secretKeyTest} onChange={(e) => setKey('secretKeyTest', e.target.value)} placeholder="sk_test_…" /></label>
+          <label className="text-xs text-muted-foreground">Public key LIVE (pk_live_…)<Input value={keys.publicKeyLive} onChange={(e) => setKey('publicKeyLive', e.target.value)} placeholder="pk_live_…" /></label>
+          <label className="text-xs text-muted-foreground">Secret key LIVE (sk_live_…)<Input type="password" value={keys.secretKeyLive} onChange={(e) => setKey('secretKeyLive', e.target.value)} placeholder="sk_live_…" /></label>
+        </div>
+
+        {!reqId ? (
+          <Button size="sm" onClick={request}>Demander un code de confirmation</Button>
+        ) : (
+          <div className="rounded-md border p-3 space-y-2">
+            {msg && <p className="text-xs text-muted-foreground">{msg}</p>}
+            {devCode && <p className="text-xs">Code (dev) : <b className="font-mono">{devCode}</b></p>}
+            <div className="flex gap-2 items-end flex-wrap">
+              <label className="text-xs text-muted-foreground">Code reçu par email
+                <Input value={code} onChange={(e) => setCode(e.target.value)} placeholder="123456" className="w-40" />
+              </label>
+              <Button size="sm" onClick={confirm}>Confirmer & appliquer</Button>
+              <Button size="sm" variant="ghost" onClick={() => { setReqId(null); setCode(''); setDevCode(null); setMsg(null); }}>Annuler</Button>
+            </div>
+          </div>
+        )}
+        {!reqId && msg && <p className="text-xs text-green-600">{msg}</p>}
+      </CardContent>
+    </Card>
   );
 }

@@ -75,14 +75,16 @@ JWT (jsonwebtoken + bcryptjs). Compte admin de référence : `valdeslando15@gmai
 - [x] Onglet **Réglages** dans `/admin` (toggle « AdSense autorisé », client id, slot, mode SebPay,
       pays, opérateurs).
 
-### ⬜ Phase C — Config API paiement + confirmation email (exigences 12, 13)
-- [ ] Étendre `Settings` : `payment.sebpay.{publicKeyTest, secretKeyTest, publicKeyLive,
-      secretKeyLive, mode: test|live, country, operators[]}`. Secrets **jamais** renvoyés au client.
-- [ ] UI admin : configurer API **test** et **live** (mode actif au choix).
-- [ ] **Flux code de confirmation** : modifier/supprimer une clé → génère un code,
-      l'envoie par email à `valdeslando15@gmail.com` (nodemailer), validé avant d'appliquer.
-- [ ] Modèle `ConfirmationCode` (code, purpose, expiresAt, used).
-- [ ] Variables d'env SMTP (documentées dans `.env.example`).
+### ✅ Phase C — Config API paiement + confirmation email (exigences 12, 13)
+- [x] `Settings.sebpay` : publicKeyTest/secretKeyTest/publicKeyLive/secretKeyLive, mode,
+      baseUrl, country, operators. Secrets **jamais** renvoyés en clair (masqués côté admin).
+- [x] UI admin : mode test/live + carte « Clés de paiement » (saisie pk/sk test & live).
+- [x] **Flux code de confirmation** : `/api/admin/payment-config/request` génère un code,
+      l'envoie à `valdeslando15@gmail.com` (nodemailer, lib/email) ; `/confirm` valide
+      (expiration 10 min, 5 tentatives max, usage unique) et applique le changement.
+- [x] Modèle `ConfirmationCode` (code, purpose, payload, expiresAt TTL, used, attempts).
+- [x] Variables d'env SMTP documentées dans `.env.example`. Fallback dev : code renvoyé
+      dans la réponse si SMTP non configuré.
 
 ### ⬜ Phase D — Paiement Mobile Money par plan (exigences 9, 10, 14)
 - [ ] `POST /api/payment/initiate` → SebPay `POST /collections`.
