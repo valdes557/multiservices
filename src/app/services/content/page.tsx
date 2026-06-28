@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import TrialAd from '@/components/TrialAd';
 import {
   Palette, Image, Youtube, ScrollText, Video,
   Sparkles, Download, Copy, Check, LayoutTemplate,
@@ -233,6 +234,9 @@ export default function ContentPage() {
             </CardContent>
           </Card>
         )}
+
+        {/* Ad shown after a generation during the free trial (if AdSense approved). */}
+        {result && <TrialAd />}
       </div>
     </div>
   );

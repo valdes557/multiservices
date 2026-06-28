@@ -64,12 +64,16 @@ JWT (jsonwebtoken + bcryptjs). Compte admin de référence : `valdeslando15@gmai
 - [ ] Gating entitlement (outil `flyer-generator`, premium → étudiant/business).
 - [ ] Liens depuis `/services` et `/services/content`. i18n FR/EN.
 
-### ⬜ Phase B — Settings global + câblage AdSense (exigences 3, 8)
-- [ ] Modèle `Settings` (singleton) : `adsenseApproved`, `adsenseClientId`, `adsenseSlotTrial`.
-- [ ] API `/api/settings` (GET public : flags non sensibles) + `/api/admin/settings` (GET/PUT).
-- [ ] Composant `TrialAd` affiché **après l'exécution d'un outil** pendant l'essai,
-      conditionné par `shouldShowAds(sub, plan, adsenseApproved)`.
-- [ ] Onglet **Réglages** dans `/admin` (toggle « AdSense autorisé », client id, slot).
+### ✅ Phase B — Settings global + câblage AdSense (exigences 3, 8)
+- [x] Modèle `Settings` (singleton) : `adsenseApproved`, `adsenseClientId`, `adsenseSlotTrial`,
+      + sous-doc `sebpay` (préparé pour Phase C/D).
+- [x] API `/api/settings` (GET public : flags non sensibles) + `/api/admin/settings` (GET/PUT,
+      secrets masqués). `lib/settings.ts` (getSettings/publicSettings/adminSettings/activeSebPayKeys).
+- [x] `SettingsContext` (client) + composant `TrialAd` affiché **après l'exécution d'un outil**
+      pendant l'essai (trial + adsEnabled + adsenseApproved). Câblé dans traduction, contenu, flyer.
+      Charge le script AdSense si client id défini, sinon placeholder « Espace publicitaire ».
+- [x] Onglet **Réglages** dans `/admin` (toggle « AdSense autorisé », client id, slot, mode SebPay,
+      pays, opérateurs).
 
 ### ⬜ Phase C — Config API paiement + confirmation email (exigences 12, 13)
 - [ ] Étendre `Settings` : `payment.sebpay.{publicKeyTest, secretKeyTest, publicKeyLive,

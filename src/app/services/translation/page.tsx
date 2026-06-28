@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
+import TrialAd from '@/components/TrialAd';
 import { Globe, ArrowRightLeft, Volume2, Copy, Check } from 'lucide-react';
 
 const languages = [
@@ -157,6 +158,8 @@ export default function TranslationPage() {
             {loading ? (t('common.processing') as string) : (t('services.translation.textTranslation') as string)}
           </Button>
         </div>
+
+        {translatedText && <TrialAd />}
 
         {!canUse && (
           <div className="mt-6 text-center">

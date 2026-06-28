@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import TrialAd from '@/components/TrialAd';
 import {
   LayoutTemplate, Download, FileDown, Image as ImageIcon, Lock, Sparkles, Trash2,
 } from 'lucide-react';
@@ -84,6 +85,7 @@ export default function FlyerPage() {
   const [align, setAlign] = useState<'left' | 'center'>(TEMPLATES[0].align);
   const [image, setImage] = useState<string | null>(null);
   const [exporting, setExporting] = useState(false);
+  const [exported, setExported] = useState(false);
 
   const [data, setData] = useState({
     headline: lc === 'fr' ? 'Votre titre ici' : 'Your headline here',
@@ -120,6 +122,7 @@ export default function FlyerPage() {
       link.download = 'flyer.png';
       link.href = canvas.toDataURL('image/png');
       link.click();
+      setExported(true);
     } finally {
       setExporting(false);
     }
@@ -136,6 +139,7 @@ export default function FlyerPage() {
       const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
       pdf.addImage(img, 'PNG', 0, 0, 210, 297);
       pdf.save('flyer.pdf');
+      setExported(true);
     } finally {
       setExporting(false);
     }
@@ -235,6 +239,8 @@ export default function FlyerPage() {
               <Button onClick={exportPng} disabled={exporting}><Download className="h-4 w-4 mr-2" /> {exporting ? tr('exporting') : tr('downloadPng')}</Button>
               <Button variant="outline" onClick={exportPdf} disabled={exporting}><FileDown className="h-4 w-4 mr-2" /> {exporting ? tr('exporting') : tr('downloadPdf')}</Button>
             </div>
+
+            {exported && <TrialAd />}
           </div>
 
           {/* ---- Live preview (A4 portrait) ---- */}
