@@ -32,6 +32,8 @@ export interface IPlan extends Document {
   adsDuringTrial: boolean;
   /** Each plan owns a discussion forum for its subscribers. */
   forumEnabled: boolean;
+  /** When false, the admin has closed the forum (read-only, no new messages). */
+  forumOpen: boolean;
   /** Inactive plans are hidden from users and cannot be subscribed to. */
   active: boolean;
   /** Display order on the pricing page (ascending). */
@@ -62,6 +64,7 @@ const PlanSchema = new Schema<IPlan>(
     limits: { type: Schema.Types.Mixed, default: {} },
     adsDuringTrial: { type: Boolean, default: true },
     forumEnabled: { type: Boolean, default: true },
+    forumOpen: { type: Boolean, default: true },
     active: { type: Boolean, default: true },
     order: { type: Number, default: 0 },
     isSystem: { type: Boolean, default: false },
