@@ -1,0 +1,37 @@
+# Render Blueprint — déploiement du site MultiServices (Next.js 14)
+# Doc : https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: multiservices
+    runtime: node
+    plan: free
+    region: frankfurt          # plus proche de l'Afrique de l'Ouest que oregon
+    branch: main
+    buildCommand: npm ci && npm run build
+    startCommand: npm start     # next start lit automatiquement la variable PORT de Render
+    healthCheckPath: /
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: 20.11.0
+      - key: NODE_ENV
+        value: production
+      # --- Secrets : à renseigner dans le dashboard Render (sync:false = non versionné) ---
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: SMTP_FROM
+        sync: false
+      - key: ADMIN_CONFIRM_EMAIL
+        sync: false
+      - key: NEXT_PUBLIC_ADSENSE_CLIENT_ID
+        sync: false
