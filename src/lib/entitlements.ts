@@ -28,6 +28,10 @@ export interface ToolView {
 export interface PlanView {
   key: string;
   adsDuringTrial: boolean;
+  /** Admin per-plan ads master switch (default true). */
+  showAds?: boolean;
+  /** Monthly price; 0 means a free plan (ads can run while active). */
+  price?: number;
   active?: boolean;
 }
 
@@ -84,9 +88,35 @@ export function shouldShowAds(
 ): boolean {
   if (!adsenseApproved) return false;
   if (!sub || !sub.adsEnabled) return false;
-  if (effectiveStatus(sub, now) !== 'trial') return false;
-  if (plan && plan.adsDuringTrial === false) return false;
-  return true;
+  // Per-plan master switch (admin can turn ads off for a whole plan).
+  if (plan && plan.showAds === false) return false;
+  const status = effectiveStatus(sub, now);
+  // Ads run during the trial...
+  if (status === 'trial') {
+    if (plan && plan.adsDuringTrial === false) return false;
+    return true;
+  }
+  // ...and for active users of a FREE plan (price 0), e.g. the "gratuit" plan.
+  if (status === 'active' && plan && (plan.price ?? 0) === 0) return true;
+  return false;
+}
+
+/**
+ * Does the user's *selected plan* grant a given tool, regardless of trial expiry?
+ * Per product choice: any user who has chosen a plan can use the tools mapped to
+ * that plan. Non-premium tools are always allowed. A tool with no plan mapping is
+ * treated as available to every plan.
+ */
+export function planAllowsTool(
+  sub: SubscriptionView | null | undefined,
+  tool: ToolView
+): boolean {
+  if (tool.active === false) return false;
+  if (!tool.isPremium) return true;
+  if (!sub?.planKey) return false;
+  if (sub.disabledByAdmin) return false;
+  if (!tool.planKeys || tool.planKeys.length === 0) return true;
+  return tool.planKeys.includes(sub.planKey);
 }
 
 /**

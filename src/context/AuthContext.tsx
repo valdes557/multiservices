@@ -31,8 +31,8 @@ interface AuthContextType {
   user: User | null;
   token: string | null;
   loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  signup: (name: string, email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<User>;
+  signup: (name: string, email: string, password: string) => Promise<User>;
   logout: () => void;
   refresh: () => Promise<void>;
   isPremium: () => boolean;
@@ -45,8 +45,8 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   token: null,
   loading: true,
-  login: async () => {},
-  signup: async () => {},
+  login: async () => ({} as User),
+  signup: async () => ({} as User),
   logout: () => {},
   refresh: async () => {},
   isPremium: () => false,
@@ -82,6 +82,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(data.user);
     localStorage.setItem('token', data.token);
     localStorage.setItem('user', JSON.stringify(data.user));
+    return data.user as User;
   }, []);
 
   const signup = useCallback(async (name: string, email: string, password: string) => {
@@ -96,6 +97,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(data.user);
     localStorage.setItem('token', data.token);
     localStorage.setItem('user', JSON.stringify(data.user));
+    return data.user as User;
   }, []);
 
   const logout = useCallback(() => {

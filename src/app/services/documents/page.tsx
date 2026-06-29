@@ -2,6 +2,7 @@
 
 import React, { useState, useRef } from 'react';
 import { useLocale } from '@/context/LocaleContext';
+import BackButton from '@/components/BackButton';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
@@ -47,6 +48,7 @@ export default function DocumentsPage() {
   return (
     <div className="py-8">
       <div className="container max-w-5xl">
+        <BackButton href="/services" />
         <div className="flex items-center gap-3 mb-8">
           <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-orange-500/10 text-orange-600">
             <FileText className="h-6 w-6" />

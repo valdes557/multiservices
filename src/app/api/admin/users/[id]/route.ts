@@ -40,7 +40,14 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
         sub.activatedByAdmin = false;
         sub.startDate = null;
         sub.endDate = null;
-        if (plan.trialDays > 0) {
+        if (plan.price === 0) {
+          // Free plan: active indefinitely, ad-supported.
+          sub.status = 'active';
+          sub.trialStartDate = null;
+          sub.trialEndDate = null;
+          sub.startDate = now;
+          sub.adsEnabled = plan.showAds !== false;
+        } else if (plan.trialDays > 0) {
           sub.status = 'trial';
           sub.trialStartDate = now;
           sub.trialEndDate = new Date(now.getTime() + plan.trialDays * DAY);

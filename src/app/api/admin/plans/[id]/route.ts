@@ -3,11 +3,12 @@ import dbConnect from '@/lib/mongodb';
 import Plan from '@/models/Plan';
 import User from '@/models/User';
 import { requireAdmin } from '@/lib/apiAuth';
+import { getSettings } from '@/lib/settings';
 
 // Fields the admin is allowed to edit on a plan (key is immutable once created).
 const EDITABLE = [
   'name', 'description', 'price', 'currency', 'trialDays', 'features',
-  'limits', 'adsDuringTrial', 'forumEnabled', 'active', 'order',
+  'limits', 'adsDuringTrial', 'showAds', 'forumEnabled', 'active', 'order',
 ] as const;
 
 // PUT /api/admin/plans/:id — update a plan.
@@ -20,6 +21,19 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     const body = await request.json();
     const plan = await Plan.findById(params.id);
     if (!plan) return NextResponse.json({ error: 'Plan not found' }, { status: 404 });
+
+    // A free plan (price 0) relies on advertising — it can only be activated once
+    // AdSense has been approved for the site.
+    const willBeFree = (body.price !== undefined ? Number(body.price) || 0 : plan.price) === 0;
+    if (body.active === true && willBeFree) {
+      const settings = await getSettings();
+      if (!settings.adsenseApproved) {
+        return NextResponse.json(
+          { error: "Le plan gratuit ne peut être activé que lorsque les publicités AdSense sont approuvées (Réglages → AdSense autorisé)." },
+          { status: 409 }
+        );
+      }
+    }
 
     for (const field of EDITABLE) {
       if (body[field] === undefined) continue;

@@ -2,6 +2,7 @@
 
 import React, { useState, useRef } from 'react';
 import { useLocale } from '@/context/LocaleContext';
+import BackButton from '@/components/BackButton';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import {
@@ -59,6 +60,7 @@ export default function ConversionPage() {
   return (
     <div className="py-8">
       <div className="container max-w-5xl">
+        <BackButton href="/services" />
         <div className="flex items-center gap-3 mb-8">
           <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-purple-500/10 text-purple-600">
             <RefreshCw className="h-6 w-6" />

@@ -118,7 +118,58 @@ JWT (jsonwebtoken + bcryptjs). Compte admin de référence : `valdeslando15@gmai
 
 ---
 
-## 🎉 Toutes les phases (A→E) sont implémentées et poussées sur `feat/nouvelles-fonctionnalites`.
+## 🎉 Toutes les phases (A→E) sont implémentées et poussées (fusionnées dans `main` via PR #2).
+
+---
+
+## ✅ Phase F — Refonte UX & gating dynamique (lot du 29/06)
+
+> Demande client : outils & plans dynamiques, plan gratuit financé par la pub, pubs
+> par plan, forum dans le dashboard, correctifs admin, bouton retour global.
+
+### Outils & plans dynamiques (DB-driven)
+- [x] `GET /api/tools` public (catalogue d'outils actifs + `planKeys`). Hook `useTools`.
+- [x] Composant `ToolsBrowser` : liste **tous les outils** depuis la DB, groupés par
+      catégorie, avec **verrou** si le plan de l'utilisateur ne donne pas l'accès
+      (→ redirige vers `/pricing`). Utilisé sur l'accueil et `/services`.
+- [x] `planAllowsTool(sub, tool)` (entitlements) : accès = utilisateur **ayant choisi un
+      plan** ET outil attribué à ce plan → l'attribution outil↔plan côté admin est
+      réellement effective.
+- [x] Composant `PlansPricing` : plans affichés depuis `/api/plans` sur l'accueil et
+      `/pricing`. **Plan « premium » hardcodé supprimé** ; plan **gratuit** mis en avant.
+      Moyens de paiement = Mobile Money (Orange/MTN/Moov/Wave).
+
+### Plan gratuit + publicités par plan
+- [x] Plan `gratuit` ajouté au seed (prix 0, outils de base, `active:false` par défaut).
+- [x] **Activation conditionnée** : un plan gratuit (prix 0) ne peut passer `active:true`
+      que si `settings.adsenseApproved` est vrai (garde dans `POST`/`PUT /api/admin/plans`).
+- [x] Champ `Plan.showAds` + **toggle « Pubs AdSense activées (ce plan) »** dans l'éditeur
+      de plan admin → activer/désactiver les pubs **par plan**.
+- [x] `shouldShowAds` étendu : pubs pendant l'essai **et** pour les utilisateurs actifs
+      d'un plan gratuit ; `TrialAd` suit `adsEnabled` (essai + gratuit-actif, jamais payé).
+- [x] Sélection d'un plan gratuit (`/api/subscription`) et `assignPlan` admin → statut
+      `active` ad-supporté (`adsEnabled = plan.showAds`).
+
+### Forum
+- [x] Lien « Forum » **retiré de la navbar**. Accès au forum du plan **depuis le dashboard**
+      utilisateur ; bouton « Gérer le forum » par plan dans l'admin.
+
+### Auth / admin
+- [x] Compte `valdeslando15@gmail.com` **supprimé** (email libéré, demandé par le client).
+- [x] **Redirection corrigée** : login/signup envoient les admins vers `/admin`,
+      les autres vers `/dashboard` (`login`/`signup` du contexte renvoient l'utilisateur).
+- [x] **Auto-promotion** : un compte créé avec `ADMIN_CONFIRM_EMAIL`
+      (`valdeslando15@gmail.com`) reçoit `role:admin` au signup → l'owner récupère l'accès
+      admin en se réinscrivant simplement.
+
+### UX
+- [x] Composant `BackButton` (history.back + fallback href) ajouté en tête de :
+      `/services`, les 7 pages catégories, `/services/content/flyer`, `/subscribe`,
+      `/dashboard`, `/admin`, `/pricing`.
+
+> À refaire après déploiement : cliquer **« Initialiser plans & outils »** dans l'admin
+> (ou re-seed) pour créer le plan `gratuit` en base, puis cocher « AdSense autorisé » avant
+> de l'activer.
 
 ---
 

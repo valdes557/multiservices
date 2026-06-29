@@ -26,6 +26,7 @@ export interface AdminPlan {
   features: { fr: string; en: string }[];
   limits: Record<string, number>;
   adsDuringTrial: boolean;
+  showAds: boolean;
   forumEnabled: boolean;
   active: boolean;
   order: number;

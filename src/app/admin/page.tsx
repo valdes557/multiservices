@@ -12,6 +12,7 @@ import {
 import {
   adminFetch, type AdminPlan, type AdminTool, type AdminUser,
 } from '@/lib/adminApi';
+import BackButton from '@/components/BackButton';
 
 type Tab = 'plans' | 'tools' | 'users' | 'settings';
 
@@ -84,6 +85,7 @@ export default function AdminPage() {
   return (
     <div className="py-8">
       <div className="container">
+        <BackButton href="/" />
         <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
           <div className="flex items-center gap-3">
             <Shield className="h-8 w-8 text-primary" />
@@ -184,6 +186,7 @@ function PlanEditor({ plan, token, reload, setError }: {
   const [price, setPrice] = useState(String(plan.price));
   const [trialDays, setTrialDays] = useState(String(plan.trialDays));
   const [adsDuringTrial, setAdsDuringTrial] = useState(plan.adsDuringTrial);
+  const [showAds, setShowAds] = useState(plan.showAds !== false);
   const [forumEnabled, setForumEnabled] = useState(plan.forumEnabled);
   const [active, setActive] = useState(plan.active);
   const [features, setFeatures] = useState(plan.features.map((f) => f.fr).join('\n'));
@@ -197,7 +200,7 @@ function PlanEditor({ plan, token, reload, setError }: {
           name: { fr: nameFr, en: nameEn || nameFr },
           price: Number(price) || 0,
           trialDays: Number(trialDays) || 0,
-          adsDuringTrial, forumEnabled, active,
+          adsDuringTrial, showAds, forumEnabled, active,
           features: features.split('\n').map((l) => l.trim()).filter(Boolean).map((l) => ({ fr: l, en: l })),
         }),
       });
@@ -242,12 +245,23 @@ function PlanEditor({ plan, token, reload, setError }: {
           />
         </label>
         <div className="flex flex-wrap gap-4 text-sm">
+          <Toggle label="Pubs AdSense activées (ce plan)" checked={showAds} onChange={setShowAds} />
           <Toggle label="Pubs pendant l'essai" checked={adsDuringTrial} onChange={setAdsDuringTrial} />
           <Toggle label="Forum activé" checked={forumEnabled} onChange={setForumEnabled} />
           <Toggle label="Actif" checked={active} onChange={setActive} />
         </div>
-        <div className="flex gap-2">
+        {plan.price === 0 && (
+          <p className="text-xs text-amber-600">
+            Plan gratuit : il ne peut être activé que si « AdSense autorisé » est coché dans Réglages (il dépend des publicités).
+          </p>
+        )}
+        <div className="flex gap-2 flex-wrap items-center">
           <Button size="sm" onClick={save}><Save className="h-4 w-4 mr-1" /> Enregistrer</Button>
+          {plan.forumEnabled && (
+            <a href={`/forum/${plan.key}`} target="_blank" rel="noreferrer">
+              <Button size="sm" variant="outline">Gérer le forum</Button>
+            </a>
+          )}
           {!plan.isSystem && (
             <Button size="sm" variant="outline" onClick={remove} className="text-red-600">
               <Trash2 className="h-4 w-4 mr-1" /> Supprimer

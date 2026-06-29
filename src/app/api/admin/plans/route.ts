@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Plan from '@/models/Plan';
 import { requireAdmin } from '@/lib/apiAuth';
+import { getSettings } from '@/lib/settings';
 
 // GET /api/admin/plans — list every plan (active or not).
 export async function GET(request: NextRequest) {
@@ -40,18 +41,27 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'A plan with this key already exists' }, { status: 409 });
     }
 
+    const price = Number(body.price) || 0;
+    let active = body.active !== false;
+    // A free plan can only start active once AdSense is approved (it relies on ads).
+    if (active && price === 0) {
+      const settings = await getSettings();
+      if (!settings.adsenseApproved) active = false;
+    }
+
     const plan = await Plan.create({
       key,
       name: body.name ?? { fr: key, en: key },
       description: body.description ?? { fr: '', en: '' },
-      price: Number(body.price) || 0,
+      price,
       currency: body.currency || 'XOF',
       trialDays: Math.max(0, Number(body.trialDays) || 0),
       features: Array.isArray(body.features) ? body.features : [],
       limits: body.limits && typeof body.limits === 'object' ? body.limits : {},
       adsDuringTrial: body.adsDuringTrial !== false,
+      showAds: body.showAds !== false,
       forumEnabled: body.forumEnabled !== false,
-      active: body.active !== false,
+      active,
       order: Number(body.order) || 0,
       isSystem: false,
     });

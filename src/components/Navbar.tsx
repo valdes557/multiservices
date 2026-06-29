@@ -25,11 +25,12 @@ export default function Navbar() {
   const [langOpen, setLangOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
+  // Forum is no longer a global nav entry — each plan's forum is reached from the
+  // user dashboard (and the admin controls it from the admin dashboard).
   const navLinks = [
     { href: '/', label: t('common.home') as string },
     { href: '/services', label: t('common.services') as string },
     { href: '/pricing', label: t('common.pricing') as string },
-    ...(user ? [{ href: '/forum', label: 'Forum' }] : []),
   ];
 
   return (

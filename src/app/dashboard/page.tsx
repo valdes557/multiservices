@@ -8,9 +8,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import BackButton from '@/components/BackButton';
 import {
   Globe, BookOpen, FileText, RefreshCw, Briefcase, Palette, TrendingUp,
-  Crown, Clock, AlertTriangle, ArrowRight,
+  Crown, Clock, AlertTriangle, ArrowRight, MessageSquare,
 } from 'lucide-react';
 
 export default function DashboardPage() {
@@ -47,6 +48,7 @@ export default function DashboardPage() {
   return (
     <div className="py-8">
       <div className="container">
+        <BackButton href="/" />
         {/* Welcome */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">
@@ -121,6 +123,35 @@ export default function DashboardPage() {
             </Card>
           )}
         </div>
+
+        {/* Plan forum access (forum is now reached from here, not the navbar) */}
+        <Card className="mb-8">
+          <CardContent className="flex flex-col sm:flex-row items-center justify-between gap-3 p-5">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <MessageSquare className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="font-medium">{t('common.appName') === 'MultiServices' ? 'Your plan forum' : 'Forum de votre plan'}</p>
+                <p className="text-sm text-muted-foreground">
+                  {user.subscription.planKey
+                    ? (t('common.appName') === 'MultiServices' ? 'Chat with members of your plan.' : 'Échangez avec les membres de votre plan.')
+                    : (t('common.appName') === 'MultiServices' ? 'Choose a plan to join its forum.' : 'Choisissez un plan pour rejoindre son forum.')}
+                </p>
+              </div>
+            </div>
+            {user.subscription.planKey ? (
+              <Link href={`/forum/${user.subscription.planKey}`}>
+                <Button size="sm">
+                  {t('common.appName') === 'MultiServices' ? 'Open forum' : 'Ouvrir le forum'}
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+            ) : (
+              <Link href="/subscribe"><Button size="sm" variant="outline">{t('common.upgradeNow') as string}</Button></Link>
+            )}
+          </CardContent>
+        </Card>
 
         {/* Quick Access */}
         <h2 className="text-xl font-semibold mb-4">{t('common.services') as string}</h2>

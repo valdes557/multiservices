@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import User from '@/models/User';
 import { hashPassword, generateToken } from '@/lib/auth';
+import { ADMIN_CONFIRM_EMAIL } from '@/lib/email';
 
 export async function POST(request: NextRequest) {
   try {
@@ -23,12 +24,16 @@ export async function POST(request: NextRequest) {
 
     const hashedPassword = await hashPassword(password);
 
+    // The configured owner email is always provisioned as administrator, so the
+    // platform owner regains admin access simply by signing up with that email.
+    const isOwner = email.toLowerCase() === ADMIN_CONFIRM_EMAIL.toLowerCase();
+
     // New users start with no plan; they pick one (which starts its trial) afterward.
     const user = await User.create({
       name,
       email: email.toLowerCase(),
       password: hashedPassword,
-      role: 'user',
+      role: isOwner ? 'admin' : 'user',
       subscription: {
         planKey: null,
         status: 'none',

@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useLocale } from '@/context/LocaleContext';
+import BackButton from '@/components/BackButton';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
@@ -58,6 +59,7 @@ export default function TranslationPage() {
   return (
     <div className="py-8">
       <div className="container max-w-5xl">
+        <BackButton href="/services" />
         <div className="flex items-center gap-3 mb-8">
           <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-500/10 text-blue-600">
             <Globe className="h-6 w-6" />

@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useLocale } from '@/context/LocaleContext';
+import BackButton from '@/components/BackButton';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -61,6 +62,7 @@ export default function ContentPage() {
   return (
     <div className="py-8">
       <div className="container max-w-5xl">
+        <BackButton href="/services" />
         <div className="flex items-center gap-3 mb-8">
           <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-pink-500/10 text-pink-600">
             <Palette className="h-6 w-6" />

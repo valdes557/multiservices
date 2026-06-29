@@ -9,6 +9,30 @@ import Tool from '@/models/Tool';
 
 export const DEFAULT_PLANS = [
   {
+    key: 'gratuit',
+    name: { fr: 'Plan Gratuit', en: 'Free Plan' },
+    description: {
+      fr: 'Gratuit, financé par la publicité : accès aux outils de base avec une pub après chaque action.',
+      en: 'Free, ad-supported: access to the basic tools with an ad after each action.',
+    },
+    price: 0,
+    currency: 'XOF',
+    trialDays: 0,
+    features: [
+      { fr: 'Outils de base (PDF, conversions simples)', en: 'Basic tools (PDF, simple conversions)' },
+      { fr: 'Publicité après chaque action', en: 'Ad after each action' },
+      { fr: 'Forum du plan Gratuit', en: 'Free plan forum' },
+    ],
+    limits: { toolsPerDay: 10 },
+    adsDuringTrial: true,
+    showAds: true,
+    forumEnabled: true,
+    // Activatable by the admin ONLY once AdSense is approved (the plan relies on ads).
+    active: false,
+    order: 0,
+    isSystem: true,
+  },
+  {
     key: 'eleve',
     name: { fr: 'Plan Élève', en: 'Pupil Plan' },
     description: {
@@ -25,6 +49,7 @@ export const DEFAULT_PLANS = [
     ],
     limits: { toolsPerDay: 20 },
     adsDuringTrial: true,
+    showAds: true,
     forumEnabled: true,
     active: true,
     order: 1,
@@ -48,6 +73,7 @@ export const DEFAULT_PLANS = [
     ],
     limits: { toolsPerDay: 100 },
     adsDuringTrial: true,
+    showAds: true,
     forumEnabled: true,
     active: true,
     order: 2,
@@ -72,6 +98,7 @@ export const DEFAULT_PLANS = [
     ],
     limits: {},
     adsDuringTrial: false,
+    showAds: false,
     forumEnabled: true,
     active: true,
     order: 3,
@@ -82,14 +109,14 @@ export const DEFAULT_PLANS = [
 /** Tool catalog. `planKeys` is the default assignment; admin can change it. */
 export const DEFAULT_TOOLS = [
   // Documents
-  { key: 'pdf-edit', name: { fr: 'Édition PDF', en: 'PDF Editing' }, category: 'documents', href: '/services/documents', icon: 'FileText', planKeys: ['eleve', 'etudiant', 'business'], order: 1 },
-  { key: 'pdf-merge', name: { fr: 'Fusion de PDF', en: 'Merge PDF' }, category: 'documents', href: '/services/documents', icon: 'FilePlus', planKeys: ['eleve', 'etudiant', 'business'], order: 2 },
+  { key: 'pdf-edit', name: { fr: 'Édition PDF', en: 'PDF Editing' }, category: 'documents', href: '/services/documents', icon: 'FileText', planKeys: ['gratuit', 'eleve', 'etudiant', 'business'], order: 1 },
+  { key: 'pdf-merge', name: { fr: 'Fusion de PDF', en: 'Merge PDF' }, category: 'documents', href: '/services/documents', icon: 'FilePlus', planKeys: ['gratuit', 'eleve', 'etudiant', 'business'], order: 2 },
   { key: 'pdf-sign', name: { fr: 'Signature électronique', en: 'E-signature' }, category: 'documents', href: '/services/documents', icon: 'PenTool', planKeys: ['etudiant', 'business'], order: 3 },
   // Conversion
-  { key: 'convert-pdf-word', name: { fr: 'PDF → Word', en: 'PDF → Word' }, category: 'conversion', href: '/services/conversion', icon: 'RefreshCw', planKeys: ['eleve', 'etudiant', 'business'], order: 4 },
-  { key: 'convert-img-pdf', name: { fr: 'Images → PDF', en: 'Images → PDF' }, category: 'conversion', href: '/services/conversion', icon: 'Image', planKeys: ['eleve', 'etudiant', 'business'], order: 5 },
+  { key: 'convert-pdf-word', name: { fr: 'PDF → Word', en: 'PDF → Word' }, category: 'conversion', href: '/services/conversion', icon: 'RefreshCw', planKeys: ['gratuit', 'eleve', 'etudiant', 'business'], order: 4 },
+  { key: 'convert-img-pdf', name: { fr: 'Images → PDF', en: 'Images → PDF' }, category: 'conversion', href: '/services/conversion', icon: 'Image', planKeys: ['gratuit', 'eleve', 'etudiant', 'business'], order: 5 },
   // Translation
-  { key: 'text-translation', name: { fr: 'Traduction de texte', en: 'Text Translation' }, category: 'translation', href: '/services/translation', icon: 'Globe', planKeys: ['eleve', 'etudiant', 'business'], order: 6 },
+  { key: 'text-translation', name: { fr: 'Traduction de texte', en: 'Text Translation' }, category: 'translation', href: '/services/translation', icon: 'Globe', planKeys: ['gratuit', 'eleve', 'etudiant', 'business'], order: 6 },
   // Professional
   { key: 'cv-generator', name: { fr: 'Générateur de CV', en: 'Resume Generator' }, category: 'professional', href: '/services/professional', icon: 'Briefcase', planKeys: ['etudiant', 'business'], order: 7 },
   { key: 'cover-letter', name: { fr: 'Lettre de motivation', en: 'Cover Letter' }, category: 'professional', href: '/services/professional', icon: 'FileSignature', planKeys: ['etudiant', 'business'], order: 8 },
