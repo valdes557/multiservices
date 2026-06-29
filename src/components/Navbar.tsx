@@ -29,6 +29,7 @@ export default function Navbar() {
     { href: '/', label: t('common.home') as string },
     { href: '/services', label: t('common.services') as string },
     { href: '/pricing', label: t('common.pricing') as string },
+    ...(user ? [{ href: '/forum', label: 'Forum' }] : []),
   ];
 
   return (

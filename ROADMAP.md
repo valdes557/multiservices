@@ -98,17 +98,27 @@ JWT (jsonwebtoken + bcryptjs). Compte admin de référence : `valdeslando15@gmai
       paiement + polling du statut, message « Payer maintenant pour arrêter les pubs » en essai.
       `TrialAd` pointe vers `/subscribe`.
 
-### ⬜ Phase E — Forums par plan (exigences 15, 16, 17)
-- [ ] Modèle `ForumMessage` (planKey, userId, author, type: text|image|voice, content,
-      attachmentUrl, deleted, createdAt).
-- [ ] Flag `Plan.forumOpen` (admin ferme/ouvre les discussions).
-- [ ] Accès : membres = users **trial+active** du plan ; exclus si expired/disabled ;
-      réintégrés après paiement (dérivé de l'entitlement, pas de table séparée).
-- [ ] API : `GET /api/forums/:planKey/messages` (poll), `POST` (gardé par entitlement),
-      `DELETE` (admin), `PATCH /api/admin/forums/:planKey` (ouvrir/fermer).
-- [ ] Upload images/voix (`POST /api/forums/:planKey/upload`).
-- [ ] UI `/forum/[planKey]` : liste messages (polling), emoji picker, upload image,
-      enregistrement vocal (MediaRecorder). Contrôle admin (fermer, supprimer, bannir).
+### ✅ Phase E — Forums par plan (exigences 15, 16, 17)
+- [x] Modèle `ForumMessage` (planKey, userId, authorName, type text|image|voice, content,
+      attachmentUrl data URL, deleted, createdAt).
+- [x] Flag `Plan.forumOpen` (admin ferme/ouvre les discussions).
+- [x] Accès dérivé de l'entitlement (`lib/forum.ts` resolveForumAccess) : membres =
+      users **trial+active** du plan ; exclus si expired/disabled ; réintégrés après paiement
+      (auto, pas de table de membres) → satisfait l'injection/exclusion auto.
+- [x] API : `GET/POST /api/forums/:planKey/messages` (poll + envoi gardé), `DELETE .../:id`
+      (admin ou auteur), `PATCH /api/admin/forums/:planKey` (open/close/clear), `GET /api/forums`.
+- [x] Pièces jointes images/voix stockées en data URL dans le message (MVP, limite ~2.5 Mo).
+- [x] UI `/forum` (index) + `/forum/[planKey]` : messages (polling 4 s), emoji picker,
+      upload image, enregistrement vocal (MediaRecorder), contrôles admin (ouvrir/fermer/vider,
+      supprimer un message). Lien « Forum » dans la navbar (connecté).
+
+> Note : passer le stockage des pièces jointes sur un bucket (S3/Cloudinary) pour la prod ;
+> remplacer le polling par WebSocket/SSE si trafic élevé. Modération « bannir » non incluse
+> (exclusion gérée par la désactivation du plan côté admin).
+
+---
+
+## 🎉 Toutes les phases (A→E) sont implémentées et poussées sur `feat/nouvelles-fonctionnalites`.
 
 ---
 
