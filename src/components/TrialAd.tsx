@@ -30,7 +30,12 @@ export default function TrialAd({ className = '' }: { className?: string }) {
   const pushed = useRef(false);
 
   const sub = user?.subscription;
-  const show = settings.adsenseApproved && sub?.effectiveStatus === 'trial' && !!sub?.adsEnabled;
+  // Ads run when the site is AdSense-approved AND the user's ads flag is on.
+  // adsEnabled is the single source of truth: it is set for trial users and for
+  // active users of a free plan, and cleared for paid/active users — so this
+  // covers both the trial and the ad-supported free plan.
+  const adStatus = sub?.effectiveStatus === 'trial' || sub?.effectiveStatus === 'active';
+  const show = settings.adsenseApproved && adStatus && !!sub?.adsEnabled;
   const clientId = settings.adsenseClientId;
 
   useEffect(() => {

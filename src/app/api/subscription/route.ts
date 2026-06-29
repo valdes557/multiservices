@@ -64,7 +64,15 @@ export async function POST(request: NextRequest) {
     sub.endDate = null;
 
     const alreadyTrialedThisPlan = sub.trialStartDate && sub.planKey === plan.key;
-    if (plan.trialDays > 0 && !alreadyTrialedThisPlan) {
+    if (plan.price === 0) {
+      // Free plan: active indefinitely, ad-supported (ads if the plan enables them).
+      sub.status = 'active';
+      sub.trialStartDate = null;
+      sub.trialEndDate = null;
+      sub.startDate = now;
+      sub.endDate = null;
+      sub.adsEnabled = plan.showAds !== false;
+    } else if (plan.trialDays > 0 && !alreadyTrialedThisPlan) {
       sub.status = 'trial';
       sub.trialStartDate = now;
       sub.trialEndDate = new Date(now.getTime() + plan.trialDays * DAY);
@@ -77,7 +85,9 @@ export async function POST(request: NextRequest) {
 
     await user.save();
     return NextResponse.json({
-      message: sub.status === 'trial' ? 'Trial started' : 'Plan selected — payment required',
+      message: sub.status === 'trial' ? 'Trial started'
+        : sub.status === 'active' ? 'Free plan activated'
+        : 'Plan selected — payment required',
       user: serializeUser(user, now),
     });
   } catch (error) {

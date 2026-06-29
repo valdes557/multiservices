@@ -3,6 +3,7 @@
 import React, { useRef, useState } from 'react';
 import Link from 'next/link';
 import { useLocale } from '@/context/LocaleContext';
+import BackButton from '@/components/BackButton';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -163,6 +164,7 @@ export default function FlyerPage() {
   return (
     <div className="py-8">
       <div className="container max-w-6xl">
+        <BackButton href="/services" />
         <div className="flex items-center gap-3 mb-6">
           <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-pink-500/10 text-pink-600">
             <LayoutTemplate className="h-6 w-6" />

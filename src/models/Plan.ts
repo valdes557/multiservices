@@ -30,6 +30,13 @@ export interface IPlan extends Document {
   limits: Record<string, number>;
   /** Whether tool executions end with a Google AdSense ad during the trial. */
   adsDuringTrial: boolean;
+  /**
+   * Admin master switch for Google AdSense ads on this plan. When false, this
+   * plan never shows ads (even during the trial). When true, ads run during the
+   * trial and for active users of a *free* plan (price 0). Paid plans keep this
+   * off. Defaults to true to preserve the existing trial-ads behaviour.
+   */
+  showAds: boolean;
   /** Each plan owns a discussion forum for its subscribers. */
   forumEnabled: boolean;
   /** When false, the admin has closed the forum (read-only, no new messages). */
@@ -63,6 +70,7 @@ const PlanSchema = new Schema<IPlan>(
     features: { type: [LocalizedSchema], default: [] },
     limits: { type: Schema.Types.Mixed, default: {} },
     adsDuringTrial: { type: Boolean, default: true },
+    showAds: { type: Boolean, default: true },
     forumEnabled: { type: Boolean, default: true },
     forumOpen: { type: Boolean, default: true },
     active: { type: Boolean, default: true },

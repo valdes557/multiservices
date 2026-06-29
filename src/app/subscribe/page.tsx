@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useLocale } from '@/context/LocaleContext';
+import BackButton from '@/components/BackButton';
 import { useAuth } from '@/context/AuthContext';
 import { useSettings } from '@/context/SettingsContext';
 import { Button } from '@/components/ui/button';
@@ -127,6 +128,7 @@ export default function SubscribePage() {
   return (
     <div className="py-12">
       <div className="container max-w-2xl">
+        <BackButton href="/dashboard" />
         <div className="text-center mb-8">
           <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary mx-auto mb-3">
             <Crown className="h-6 w-6" />

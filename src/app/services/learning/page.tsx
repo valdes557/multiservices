@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useLocale } from '@/context/LocaleContext';
+import BackButton from '@/components/BackButton';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -79,6 +80,7 @@ export default function LearningPage() {
   return (
     <div className="py-8">
       <div className="container max-w-5xl">
+        <BackButton href="/services" />
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">
             <span className="text-4xl">{lang.flag}</span>
